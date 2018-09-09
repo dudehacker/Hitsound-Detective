@@ -41,7 +41,7 @@ Reference: https://osu.ppy.sh/beatmapsets/597113/discussion/-/generalAll#/476017
 Fixed bug with showing inconsistency when target has note but hitsound diff doesnt have note
 Added snapping uncertainty, for example, a note at time = 1447 will be checked against 1446, 1447 and 1448 in source difficulty.
 
-## Screenshot**
+## Screenshot
 ![alt text](http://i.imgur.com/0j2en9y.jpg)
 
 
