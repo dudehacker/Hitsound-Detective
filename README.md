@@ -14,7 +14,7 @@ https://drive.google.com/open?id=1rWBwBx5jrHVRnvvvavME8BP5yuTK3xfU
 1. Check unused hitsound
 2. Check muted hitsound or Storyboard sample
 3. Check hitsound inconsistency
-4. Check missing hitsound
+4. Check missing hitsound (except hitnormal)
 
 Note: support WFC stacked on 1 note, custom hitsound and additions
 
