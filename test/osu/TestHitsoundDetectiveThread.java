@@ -2,7 +2,14 @@ package osu;
 
 import org.junit.Test;
 
-import main.HitsoundDetectiveThread;
+import detective.hitsound.HitsoundDetectiveThread;
+import osu.beatmap.Chord;
+import osu.beatmap.event.Sample;
+import osu.beatmap.hitobject.Addition;
+import osu.beatmap.hitobject.HitObject;
+import osu.beatmap.hitobject.HitsoundType;
+import osu.beatmap.hitobject.SampleSet;
+import util.BeatmapUtils;
 
 import static org.junit.Assert.*;
 
@@ -29,7 +36,7 @@ public class TestHitsoundDetectiveThread {
 		Sample s3 = new Sample(100,"kick.wav",100);
 		samples.add(s3);
 		
-		Map<Long, Chord> chordMap = HitsoundDetectiveThread.convertToChordMapWithHitsound(hitObjects, samples);
+		Map<Long, Chord> chordMap = BeatmapUtils.convertToChordMapWithHitsound(hitObjects, samples);
 		
 		Chord expected1 = new Chord();
 		expected1.add(ho1);

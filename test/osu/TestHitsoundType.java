@@ -1,5 +1,8 @@
 package osu;
 import org.junit.Test;
+
+import osu.beatmap.hitobject.HitsoundType;
+
 import static org.junit.Assert.*;
 
 public class TestHitsoundType {

@@ -1,6 +1,14 @@
 package osu;
 
 import org.junit.Test;
+
+import osu.beatmap.Chord;
+import osu.beatmap.event.Sample;
+import osu.beatmap.hitobject.Addition;
+import osu.beatmap.hitobject.HitObject;
+import osu.beatmap.hitobject.HitsoundType;
+import osu.beatmap.hitobject.SampleSet;
+
 import static org.junit.Assert.*;
 
 
