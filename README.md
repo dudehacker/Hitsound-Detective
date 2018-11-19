@@ -8,7 +8,7 @@ Check hitsound issues in osu!mania maps
 2. The result will be displayed as hyperlink, clicking it will direct you to the note in osu editor. 
 
 ## Download
-https://drive.google.com/open?id=1rWBwBx5jrHVRnvvvavME8BP5yuTK3xfU
+https://drive.google.com/open?id=1ihorFGjMq-ku4MoIsKtRz3C3xfa-Zaa_
 
 ## Usage
 1. Check unused hitsound
