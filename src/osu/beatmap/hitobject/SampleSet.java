@@ -12,6 +12,9 @@ public enum SampleSet {
 	}
 	
 	public static SampleSet createSampleSet(String value) {
+		if (value.equalsIgnoreCase("none")) {
+			return AUTO;
+		}
 		for (SampleSet sampleSet : SampleSet.values()) {
 			if (value.equalsIgnoreCase(sampleSet.text)) {
 				return sampleSet;

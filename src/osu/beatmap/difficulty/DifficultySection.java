@@ -8,7 +8,7 @@ public final class DifficultySection extends Section{
 	private double HP = 8;
 	private int keyCount = 7;
 	private double OD = 8;
-	private int approchRate = 5;
+	private double approachRate = 5;
 	private double sliderMultiplier = 1.4;
 	private double sliderTickRate = 1;
 	
@@ -22,7 +22,7 @@ public final class DifficultySection extends Section{
 		HP = Double.parseDouble(lines[0].split(":")[1].trim());
 		keyCount = Integer.parseInt(lines[1].split(":")[1].trim());
 		OD = Double.parseDouble(lines[2].split(":")[1].trim());
-		approchRate = Integer.parseInt(lines[3].split(":")[1].trim());
+		approachRate = Double.parseDouble(lines[3].split(":")[1].trim());
 		sliderMultiplier = Double.parseDouble(lines[4].split(":")[1].trim());
 		sliderTickRate = Double.parseDouble(lines[5].split(":")[1].trim());
 	}
@@ -32,7 +32,7 @@ public final class DifficultySection extends Section{
 				+ "HPDrainRate:" + HP + nl
 				+ "CircleSize:" + keyCount + nl
 				+ "OverallDifficulty:" + OD + nl
-				+ "ApproachRate:" + approchRate + nl
+				+ "ApproachRate:" + approachRate + nl
 				+ "SliderMultiplier:" + BeatmapUtils.doubleToIntString(sliderMultiplier) + nl
 				+ "SliderTickRate:" + BeatmapUtils.doubleToIntString(sliderTickRate) + nl;
 	}

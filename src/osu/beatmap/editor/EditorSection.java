@@ -1,8 +1,5 @@
 package osu.beatmap.editor;
 
-import java.text.DecimalFormat;
-import java.util.regex.Pattern;
-
 import osu.beatmap.Section;
 import util.BeatmapUtils;
 
@@ -20,11 +17,23 @@ public final class EditorSection extends Section{
 	}
 	
 	public void init(String[] lines) {
-		boomarks = lines[0];
-		distanceSpacing = Double.parseDouble(lines[1].split(":")[1].trim());
-		beatDivisor = Integer.parseInt(lines[2].split(":")[1].trim());
-		gridSize = Integer.parseInt(lines[3].split(":")[1].trim());
-		timelineZoom = Double.parseDouble(lines[4].split(":")[1].trim());
+		for (String line : lines) {
+			if (line.contains("DistanceSpacing")) {
+				distanceSpacing = Double.parseDouble(line.split(":")[1].trim());
+			}
+			if (line.contains("BeatDivisor")) {
+				beatDivisor = Integer.parseInt(line.split(":")[1].trim());
+			}
+			if (line.contains("GridSize")) {
+				gridSize = Integer.parseInt(line.split(":")[1].trim());
+			}
+			if (line.contains("TimelineZoom")) {
+				timelineZoom = Double.parseDouble(line.split(":")[1].trim());
+			}
+			if (line.contains("Bookmarks")) {
+				boomarks = line;
+			}
+		}
 	}
 
 	@Override

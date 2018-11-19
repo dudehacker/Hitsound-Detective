@@ -1,51 +1,42 @@
 package osu.beatmap.metadata;
 
+import osu.beatmap.Property;
 import osu.beatmap.Section;
-import util.BeatmapUtils;
 
 public final class MetadataSection extends Section{
-	private String title = "";
-	private String titleUnicode = "";
-	private String artist = "";
-	private String artistUnicode = "";
-	private String creator = "";
-	private String version = "";
-	private String source = "";
-	private String tags = "";
-	private int beatmapID = 0;
-	private int beatmapSetID = -1;
 	
-	private static final String nl = BeatmapUtils.nl;
+	private static final String titleKey = "Title";
+	private static final String titleUnicodeKey = "TitleUnicode";
+	private static final String artistKey = "Artist";
+	private static final String artistUnicodeKey = "ArtistUnicode";
+	private static final String creatorKey = "Creator";
+	private static final String versionKey = "Version";
+	private static final String sourceKey = "Source";
+	private static final String tagsKey = "Tags";
+	
+	
+	private static final String beatmapIdKey = "BeatmapID";
+	private static final String beatmapSetIdKey = "BeatmapSetID";
+	
 	
 	public MetadataSection() {
 		super("[Metadata]");
+		keys.add(titleKey);
+		keys.add(titleUnicodeKey);
+		keys.add(artistKey);
+		keys.add(artistUnicodeKey);
+		keys.add(creatorKey);
+		keys.add(versionKey);
+		keys.add(sourceKey);
+		keys.add(tagsKey);
+		keys.add(beatmapIdKey);
+		keys.add(beatmapSetIdKey);
+		
+		properties.put(beatmapIdKey, new Property(0));
+		properties.put(beatmapSetIdKey, new Property(-1));
 	}
 	
-	public void init(String[] lines) {
-		title = lines[0].split("Title:")[1].trim();
-		titleUnicode = lines[1].split("TitleUnicode:")[1].trim();
-		artist = lines[2].split("Artist:")[1].trim();
-		artistUnicode = lines[3].split("ArtistUnicode:")[1].trim();
-		creator = lines[4].split("Creator:")[1].trim();
-		version = lines[5].split("Version:")[1].trim();
-		source = lines[6].split("Source:")[1].trim();
-		tags = lines[7].split("Tags:")[1].trim();
-		beatmapID = Integer.parseInt(lines[8].split(":")[1].trim());
-		beatmapSetID = Integer.parseInt(lines[9].split(":")[1].trim());
-	}
 	
 	
-	public final String toString() {
-		return  getHeader() + nl
-				+ "Title:" + title + nl
-				+ "TitleUnicode:" + titleUnicode + nl
-				+ "Artist:" + artist + nl
-				+ "ArtistUnicode:" + artistUnicode + nl
-				+ "Creator:" + creator + nl
-				+ "Version:" + version + nl
-				+ "Source:" + source + nl
-				+ "Tags:" + tags + nl
-				+ "BeatmapID:" + beatmapID + nl
-				+ "BeatmapSetID:" + beatmapSetID + nl;
-	}
+
 }
