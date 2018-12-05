@@ -27,10 +27,12 @@ public class ImageDetective implements Runnable{
 	@Override
 	public void run() {
 		String bg = new Beatmap(osuFile).getEventSection().getBgImage();
+		File bgFile = null;
 		try {
-			File bgFile = new File(osuFile.getParent()+"\\"+bg);
+			bgFile = new File(osuFile.getParent()+"\\"+bg);
 			if (!bgFile.exists()) {
 				mistake = new TimedMistake(0,MistakeType.MissingImage);
+				System.out.println("missing image");
 				return;
 			}
 		
@@ -39,13 +41,14 @@ public class ImageDetective implements Runnable{
 			int height         = bimg.getHeight();
 			if (width > MAX_WIDTH || height > MAX_HEIGHT) {
 				mistake= new TimedMistake(0,MistakeType.BadResolutionImage);
+				System.out.println("bad resolution image");
 			}
 			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Error opening bg image", JOptionPane.ERROR_MESSAGE);
-			System.exit(-1);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Error opening bg image " + bgFile.getAbsolutePath(), JOptionPane.ERROR_MESSAGE);
+			
 		}
 	}
 	
