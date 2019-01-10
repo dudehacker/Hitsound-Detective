@@ -6,6 +6,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,6 +15,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import detective.hitsound.HitsoundDetectiveThread;
+import detective.image.ImageDetective;
+import osu.beatmap.Beatmap;
+import osu.beatmap.general.Mode;
 import util.BeatmapUtils;
 
 public class Main {
@@ -22,7 +26,9 @@ public class Main {
 	private static String programStartPath = System.getProperty("user.dir");
 	private static List<HitsoundDetectiveThread> threads = new ArrayList<HitsoundDetectiveThread>();
 	private static int finishedThreadCount = 0;
+	private static int maxThreadSize;
 	private static File sourceFile;
+	private static Set<String> imageMistakes = new HashSet<>();
 
 	public static void main(String[] args) {
 		readFromProperty(programStartPath);
@@ -46,18 +52,42 @@ public class Main {
 			}
 		};
 		File[] fileTargets = new File(OsuPath).listFiles(textFilter);
-
+		Set<String> images = new HashSet<>();
 		for (File f : fileTargets) {
-			HitsoundDetectiveThread hd = new HitsoundDetectiveThread(sourceFile, f);
-			threads.add(hd);
-			hd.start();
+			Beatmap b;
+			try {
+				b = new Beatmap(f);
+				if (b.getGeneralSection().getMode().equals(Mode.MANIA)) {
+					images.add(b.getEventSection().getBgImage());
+					HitsoundDetectiveThread hd = new HitsoundDetectiveThread(sourceFile, f);
+					threads.add(hd);
+					hd.start();
+				}
+			} catch (ParseException e) {
+//				e.printStackTrace();
+			} catch (IOException e) {
+//				e.printStackTrace();
+			} catch (NumberFormatException e) {
+//				e.printStackTrace();
+			}
+			
+		}
+		System.out.println("after reading all beatmaps");
+		maxThreadSize = threads.size();
+
+		for (String image : images) {
+			File f = new File(sourceFile.getParent()+"\\"+image);
+			Mistake m = ImageDetective.check(f);
+			if (m != null) {
+				imageMistakes.add(m.getDescription());
+			}
 		}
 
 	}
 
-	public static void threadFinished() throws Exception {
+	public static synchronized void threadFinished() throws Exception {
 		finishedThreadCount++;
-		if (threads.size() == finishedThreadCount) {
+		if (maxThreadSize == finishedThreadCount) {
 			ResultsWindow frame = new ResultsWindow();
 			frame.setVisible(true);
 
@@ -98,6 +128,7 @@ public class Main {
 			missingHitsounds.removeAll(physicalHS);
 			frame.addTabForAllDifficulties("Missing hitsound",missingHitsounds);
 
+//			frame.addTabForAllDifficulties("Bad Images", imageMistakes);
 		}
 	}
 

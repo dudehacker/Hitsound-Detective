@@ -77,6 +77,7 @@ public class ResultsWindow extends JFrame {
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
 	}
+	
 
 	public void addTabForAllDifficulties(String tabName, Collection<String> HS) {
 		if (HS.size() > 0) {

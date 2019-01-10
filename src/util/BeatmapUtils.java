@@ -429,7 +429,7 @@ public class BeatmapUtils {
 						int volume;
 						String wav;
 						String part5;
-						if (type == 128) {
+						if (HitObject.isLN(type)) {
 							int firstColonIndex = parts[5].indexOf(':');
 							part5 = parts[5].substring(firstColonIndex + 1, parts[5].length());
 							// change LN to short note

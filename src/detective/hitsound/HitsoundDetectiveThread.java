@@ -13,7 +13,6 @@ import java.util.TreeSet;
 
 import detective.Main;
 import detective.TimedMistake;
-import detective.image.ImageDetective;
 import detective.MistakeType;
 import osu.beatmap.Chord;
 import osu.beatmap.event.Sample;
@@ -72,12 +71,6 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 	@Override
 	public void run() {
 		try {
-			
-			ImageDetective id = new ImageDetective(targetDifficulty);
-			id.run();
-			if (id.getMistake() != null) {
-				mistakes.add(id.getMistake());
-			}
 
 			checkUnusedTimings();
 
@@ -138,8 +131,8 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 			e.printStackTrace();
 		}
 	}
-
 	
+
 
 	public void start() {
 		if (t == null) {

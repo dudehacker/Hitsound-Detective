@@ -3,7 +3,11 @@ package osu.beatmap;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -36,7 +40,7 @@ public final class Beatmap {
 		sections.add(new HitObjectSection());
 	}
 
-	public Beatmap(File file) {
+	public Beatmap(File file) throws ParseException, IOException {
 
 		this();
 		if (!file.exists() || !file.getAbsolutePath().endsWith(".osu")) {
@@ -66,11 +70,11 @@ public final class Beatmap {
 				sections.get(i).init(sectionText.split(System.lineSeparator()));
 			}
 
-		} catch (Exception e) {
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			System.exit(1);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
-
 	}
 
 	public GeneralSection getGeneralSection() {

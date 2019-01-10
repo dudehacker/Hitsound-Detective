@@ -36,6 +36,10 @@ public enum SampleSet {
 		return text;
 	}
 	
+	public String toUpperString() {
+		return (""+text.charAt(0)).toUpperCase() + text.substring(1, text.length());
+	}
+	
 	public int getValue() {
 		return value;
 	}

@@ -62,7 +62,6 @@ public class HitObject implements Cloneable {
 		this.xposition = hitObject.xposition;
 	}
 
-
 	public void convertColumnIDtoXpos(int KeyCount) {
 		double columnWidth = 512.0 / KeyCount;
 		xposition = (int) Math.round(column * columnWidth) + 10;
@@ -76,6 +75,21 @@ public class HitObject implements Cloneable {
 		hitSound = "";
 		volume = 0;
 		return this;
+	}
+
+	public static boolean isLN(int type) {
+		switch (type) {
+		case 1:
+		case 5:
+			return false;
+
+		case 128:
+		case 132:
+			return true;
+
+		default:
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public boolean hasWAV_HS() {
@@ -212,8 +226,8 @@ public class HitObject implements Cloneable {
 	public String toString() {
 		if (type != 128) {
 			// for a single note
-			return "" + xposition + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue() + ","
-					+ sampleSet.getValue() + ":" + addition.getValue() + ":0:" + volume + ":" + hitSound;
+			return "" + xposition + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue()
+					+ "," + sampleSet.getValue() + ":" + addition.getValue() + ":0:" + volume + ":" + hitSound;
 		}
 		// for a LN
 		return "" + xposition + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue() + ","

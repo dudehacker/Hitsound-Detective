@@ -6,12 +6,14 @@ import static org.junit.Assert.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 
 public class TestBeatmap {
 	
 	@Test
-	public void TestReadBeatmapFromFile() {
+	public void TestReadBeatmapFromFile() throws ParseException, IOException {
 		File f = new File("testBeatmap.osu");
 		String text = "";
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"))) {

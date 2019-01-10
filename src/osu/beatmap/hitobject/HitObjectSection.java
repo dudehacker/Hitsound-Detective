@@ -19,40 +19,46 @@ public final class HitObjectSection extends Section {
 
 	public void init(String[] lines) {
 		for (String line : lines) {
-			if (line != null && line.contains(",")) {
-				String[] parts = line.split(Pattern.quote(","));
-				int x = Integer.parseInt(parts[0]);
-				long t = Long.parseLong(parts[2]);
-				int type = Integer.parseInt(parts[3]);
-				HitsoundType WFC = HitsoundType.createHitsoundType(Integer.parseInt(parts[4]));
-				int volume;
-				String wav;
-				String part5;
-				if (type == 128) {
-					int firstColonIndex = parts[5].indexOf(':');
-					part5 = parts[5].substring(firstColonIndex + 1, parts[5].length());
-					// change LN to short note
-				} else {
-					// short note
-					part5 = parts[5];
-				}
-				volume = getVolumeFromFullHitSoundString(part5);
-				wav = getWavNameFromFullHitSoundString(part5);
-				SampleSet sampleSet = SampleSet.createSampleSet(Integer.parseInt(part5.substring(0, 1)));
-				Addition addition = Addition.createAddition(Integer.parseInt(part5.substring(2, 3)));
+			try {
+				if (line != null && line.contains(",")) {
+					String[] parts = line.split(Pattern.quote(","));
+					int x = Integer.parseInt(parts[0]);
+					long t = Long.parseLong(parts[2]);
+					int type = Integer.parseInt(parts[3]);
+					HitsoundType WFC = HitsoundType.createHitsoundType(Integer.parseInt(parts[4]));
+					int volume;
+					String wav;
+					String part5;
+					if (HitObject.isLN(type)) {
+						int firstColonIndex = parts[5].indexOf(':');
+						part5 = parts[5].substring(firstColonIndex + 1, parts[5].length());
+						// change LN to short note
+					} else {
+						// short note
+						part5 = parts[5];
+					}
+					volume = getVolumeFromFullHitSoundString(part5);
+					wav = getWavNameFromFullHitSoundString(part5);
+					SampleSet sampleSet = SampleSet.createSampleSet(Integer.parseInt(part5.substring(0, 1)));
+					Addition addition = Addition.createAddition(Integer.parseInt(part5.substring(2, 3)));
 
-				if (!wav.isEmpty()) {
-					HitObject hitObject = new HitObject(x, t, wav, volume, WFC, 0, addition, sampleSet);
-					hitObject.setType(type);
+					if (!wav.isEmpty()) {
+						HitObject hitObject = new HitObject(x, t, wav, volume, WFC, 0, addition, sampleSet);
+						hitObject.setType(type);
 //					hitObject.applyTimingPoint(timingPoints);
-					hitObjects.add(hitObject);
-				} else {
-					for (HitsoundType hitsoundType : WFC.split()) {
-						HitObject hitObject = new HitObject(x, t, wav, volume, hitsoundType, 0, addition, sampleSet);
-//						hitObject.applyTimingPoint(timingPoints);
 						hitObjects.add(hitObject);
+					} else {
+						for (HitsoundType hitsoundType : WFC.split()) {
+							HitObject hitObject = new HitObject(x, t, wav, volume, hitsoundType, 0, addition,
+									sampleSet);
+//						hitObject.applyTimingPoint(timingPoints);
+							hitObjects.add(hitObject);
+						}
 					}
 				}
+			} catch (Exception e) {
+				System.err.println(line);
+				e.printStackTrace();
 			}
 		}
 	}

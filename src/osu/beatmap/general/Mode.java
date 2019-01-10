@@ -1,7 +1,5 @@
 package osu.beatmap.general;
 
-import osu.beatmap.hitobject.SampleSet;
-
 public enum Mode {
 	STD(0),MANIA(3),TAIKO(1),CTB(2);
 	
@@ -22,5 +20,14 @@ public enum Mode {
 			}
 		} 
 		throw new IllegalArgumentException("Invalid value :" + value);
+	}
+
+	public static Mode createMode(String rawValue) {
+		try {
+			return createMode(Integer.parseInt(rawValue.trim()));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		throw new IllegalArgumentException("Invalid value :" + rawValue);
 	}
 }
