@@ -8,7 +8,7 @@ Check hitsound issues in osu!mania maps
 2. The result will be displayed as hyperlink, clicking it will direct you to the note in osu editor. 
 
 ## Download
-https://drive.google.com/open?id=1ikGalx1X0qE95qYNyUJgF_7Y3AjUWlKj
+https://drive.google.com/open?id=1h6XZMgYDxSb3rRM55SVqJBZCkr-6geTl
 
 ## Usage
 1. Check unused hitsound
@@ -40,6 +40,9 @@ Reference: https://osu.ppy.sh/beatmapsets/597113/discussion/-/generalAll#/476017
 ###### Update: August 25, 2018
 Fixed bug with showing inconsistency when target has note but hitsound diff doesnt have note
 Added snapping uncertainty, for example, a note at time = 1447 will be checked against 1446, 1447 and 1448 in source difficulty.
+
+###### Update: Jan 9, 2019
+Fixed bug with note type 132 (first LN after a break) causing program to crash
 
 ## Screenshot
 ![alt text](http://i.imgur.com/0j2en9y.jpg)
