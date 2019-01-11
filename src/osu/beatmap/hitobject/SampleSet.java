@@ -37,6 +37,9 @@ public enum SampleSet {
 	}
 	
 	public String toUpperString() {
+		if (value==0) {
+			return "None";
+		}
 		return (""+text.charAt(0)).toUpperCase() + text.substring(1, text.length());
 	}
 	
