@@ -79,7 +79,12 @@ public abstract class Section {
 		String output = "";
 		output += header + nl;
 		for (Key key : map.keySet()) {
-			output += map.get(key);
+			if (key.getType().equals(Double.class)) {
+				output += key.getName() + separator + " " +BeatmapUtils.doubleToIntString((Double) map.get(key)) + nl;
+			} else {
+				output += key.getName() + separator + " " +map.get(key) + nl;
+			}
+
 		}
 		return output;
 	}

@@ -40,7 +40,7 @@ public class BeatmapUtils {
 	public final static String defaultOsuPath = "C:/Program Files (x86)/osu!/Songs";
 	public final static String startPath = System.getProperty("user.dir");
 	
-	public static String doubleToIntString(double doubleValue) {
+	public static String doubleToIntString(Double doubleValue) {
 		return Double.toString(doubleValue).split(Pattern.quote(".0"))[0];
 	}
 

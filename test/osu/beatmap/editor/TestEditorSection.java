@@ -24,7 +24,7 @@ public class TestEditorSection {
 			String line;
 			// read line by line
 			while ((line = br.readLine()) != null) {
-				text += line + System.lineSeparator();
+				text += line + System.lineSeparator(); 
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
