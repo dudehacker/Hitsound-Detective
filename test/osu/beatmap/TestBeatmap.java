@@ -27,6 +27,7 @@ public class TestBeatmap {
 		}
 		
 		Beatmap b = new Beatmap(f);
+		System.out.println(b);
 		assertEquals(text, b.toString());
 	}
 	

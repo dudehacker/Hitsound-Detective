@@ -31,7 +31,4 @@ public final class MetadataSection extends Section{
 		addProperty(beatmapSetIdKey, -1);
 	}
 	
-	
-	
-
 }

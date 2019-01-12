@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import osu.beatmap.event.Sample;
 import osu.beatmap.timing.Timing;
@@ -13,8 +14,8 @@ public class HitObject implements Cloneable {
 	// Instance Variables
 	private int type; // 1=circle 128=LN
 	private long endLN;
-	private int xposition;
-	private final int ypos = 192;
+	private int xpos;
+	private int ypos = 192;
 	private long startTime;
 	private String hitSound;
 	private int volume;
@@ -32,7 +33,7 @@ public class HitObject implements Cloneable {
 
 	public HitObject(int xposition, long startTime, String hitSound, int volume, HitsoundType whistle_finish_clap,
 			int setID, Addition addition, SampleSet sampleSet) {
-		this.xposition = xposition;
+		this.xpos = xposition;
 		this.startTime = startTime;
 		if (hitSound == null) {
 			hitSound = "";
@@ -59,12 +60,63 @@ public class HitObject implements Cloneable {
 		this.type = hitObject.type;
 		this.volume = hitObject.volume;
 		this.whistle_finish_clap = hitObject.whistle_finish_clap;
-		this.xposition = hitObject.xposition;
+		this.xpos = hitObject.xpos;
+	}
+	
+	public HitObject(String line) throws Exception {
+		if (line != null && line.contains(",")) {
+			String[] parts = line.split(Pattern.quote(","));
+			xpos = Integer.parseInt(parts[0]);
+			ypos = Integer.parseInt(parts[1]);
+			startTime = Long.parseLong(parts[2]);
+			type = Integer.parseInt(parts[3]);
+			whistle_finish_clap = HitsoundType.createHitsoundType(Integer.parseInt(parts[4]));
+			String part5 = parts[5];
+			if (isLN(type)) {
+				int firstColonIndex = parts[5].indexOf(':');
+				endLN = Long.parseLong(part5.split(":")[0]);
+				part5 = parts[5].substring(firstColonIndex + 1, parts[5].length());
+			} else {
+				// short note
+				part5 = parts[5];
+			}
+			volume = getVolumeFromFullHitSoundString(part5);
+			hitSound = getWavNameFromFullHitSoundString(part5);
+			sampleSet = SampleSet.createSampleSet(Integer.parseInt(part5.substring(0, 1)));
+			addition = Addition.createAddition(Integer.parseInt(part5.substring(2, 3)));
+
+		} else {
+			throw new Exception(line);
+		}
+	}
+	
+	private static int getVolumeFromFullHitSoundString(String hs) {
+		int vol = 0;
+		try {
+			for (int i = 0; i < 3; i++) {
+				int index = hs.indexOf(':');
+				hs = hs.substring(index + 1, hs.length());
+			}
+			vol = Integer.parseInt(hs.substring(0, hs.indexOf(':')));
+		} catch (Exception e) {
+			System.out.println(hs + " caused an exception");
+		}
+		return vol;
+	}
+
+	private static String getWavNameFromFullHitSoundString(String hs) {
+		String output = "";
+		for (int i = 0; i < 3; i++) {
+			int index = hs.indexOf(':');
+			hs = hs.substring(index + 1, hs.length());
+		}
+		output = hs.substring(hs.indexOf(':') + 1, hs.length());
+		return output;
 	}
 
 	public void convertColumnIDtoXpos(int KeyCount) {
 		double columnWidth = 512.0 / KeyCount;
-		xposition = (int) Math.round(column * columnWidth) + 10;
+		xpos = (int) Math.round(column * columnWidth) + 10;
 	}
 
 	public HitObject clearHS() {
@@ -131,7 +183,7 @@ public class HitObject implements Cloneable {
 		result = prime * result + type;
 		result = prime * result + volume;
 		result = prime * result + ((whistle_finish_clap == null) ? 0 : whistle_finish_clap.hashCode());
-		result = prime * result + xposition;
+		result = prime * result + xpos;
 		return result;
 	}
 
@@ -169,7 +221,7 @@ public class HitObject implements Cloneable {
 			return false;
 		if (whistle_finish_clap != other.whistle_finish_clap)
 			return false;
-		if (xposition != other.xposition)
+		if (xpos != other.xpos)
 			return false;
 		return true;
 	}
@@ -226,11 +278,11 @@ public class HitObject implements Cloneable {
 	public String toString() {
 		if (type != 128) {
 			// for a single note
-			return "" + xposition + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue()
+			return "" + xpos + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue()
 					+ "," + sampleSet.getValue() + ":" + addition.getValue() + ":0:" + volume + ":" + hitSound;
 		}
 		// for a LN
-		return "" + xposition + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue() + ","
+		return "" + xpos + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue() + ","
 				+ endLN + ":" + sampleSet.getValue() + ":" + addition.getValue() + ":0:" + volume + ":" + hitSound;
 	}
 
@@ -329,8 +381,8 @@ public class HitObject implements Cloneable {
 	public static Comparator<HitObject> ColumnComparator = new Comparator<HitObject>() {
 		@Override
 		public int compare(HitObject n1, HitObject n2) {
-			long c1 = n1.xposition;
-			long c2 = n2.xposition;
+			long c1 = n1.xpos;
+			long c2 = n2.xpos;
 			/* For ascending order */
 			return (int) (c1 - c2);
 		}

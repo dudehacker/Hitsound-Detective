@@ -18,7 +18,6 @@ public final class EditorSection extends Section{
 		addProperty(beatDivisor, 4);
 		addProperty(gridSize, 4);
 		addProperty(timelineZoom, 1.0);
-		
 	}
 	
 }
