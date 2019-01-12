@@ -1,39 +1,26 @@
 package osu.beatmap.difficulty;
 
+import osu.beatmap.Key;
 import osu.beatmap.Section;
-import util.BeatmapUtils;
 
 public final class DifficultySection extends Section{
-
-	private double HP = 8;
-	private int keyCount = 7;
-	private double OD = 8;
-	private double approachRate = 5;
-	private double sliderMultiplier = 1.4;
-	private double sliderTickRate = 1;
 	
-	private static final String nl = BeatmapUtils.nl;
+	private static final Key HP = new Key("HPDrainRate",Double.class);
+	private static final Key keyCount = new Key("CircleSize",Integer.class);
+	private static final Key OD = new Key("OverallDifficulty",Double.class);
+	private static final Key approachRate = new Key("ApproachRate",Double.class);
+	private static final Key sliderMultiplier = new Key("SliderMultiplier",Double.class);
+	private static final Key sliderTickRate = new Key("SliderTickRate",Double.class);
+	
 	
 	public DifficultySection() {
 		super("[Difficulty]");
+		addProperty(HP, 8.0);
+		addProperty(keyCount, 7);
+		addProperty(OD, 8.0);
+		addProperty(approachRate, 5.0);
+		addProperty(sliderMultiplier, 1.4);
+		addProperty(sliderTickRate, 1.0);
 	}
 	
-	public void init(String[] lines) {
-		HP = Double.parseDouble(lines[0].split(":")[1].trim());
-		keyCount = Integer.parseInt(lines[1].split(":")[1].trim());
-		OD = Double.parseDouble(lines[2].split(":")[1].trim());
-		approachRate = Double.parseDouble(lines[3].split(":")[1].trim());
-		sliderMultiplier = Double.parseDouble(lines[4].split(":")[1].trim());
-		sliderTickRate = Double.parseDouble(lines[5].split(":")[1].trim());
-	}
-	
-	public final String toString() {
-		return  getHeader() + nl
-				+ "HPDrainRate:" + HP + nl
-				+ "CircleSize:" + keyCount + nl
-				+ "OverallDifficulty:" + OD + nl
-				+ "ApproachRate:" + approachRate + nl
-				+ "SliderMultiplier:" + BeatmapUtils.doubleToIntString(sliderMultiplier) + nl
-				+ "SliderTickRate:" + BeatmapUtils.doubleToIntString(sliderTickRate) + nl;
-	}
 }
