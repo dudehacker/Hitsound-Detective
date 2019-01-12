@@ -69,6 +69,9 @@ public final class Beatmap {
 				String sectionText = getSectionText(text, section1, section2);
 				sections.get(i).init(sectionText.split(System.lineSeparator()));
 			}
+			
+			// Set up HitObject hs based on timing points
+			getHitObjectSection().addTimingHitsound(getTimingSection());
 
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

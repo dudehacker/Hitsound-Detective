@@ -42,4 +42,8 @@ public final class TimingSection extends Section{
 		return getHeader() + BeatmapUtils.nl
 				+ BeatmapUtils.convertListToString(timings) ;
 	}
+
+	public List<Timing> getTimingPoints() {
+		return timings;
+	}
 }

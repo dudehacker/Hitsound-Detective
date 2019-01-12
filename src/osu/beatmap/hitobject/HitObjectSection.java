@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import osu.beatmap.Section;
+import osu.beatmap.timing.TimingSection;
 import util.BeatmapUtils;
 
 public final class HitObjectSection extends Section {
@@ -29,5 +30,11 @@ public final class HitObjectSection extends Section {
 
 	public final String toString() {
 		return BeatmapUtils.nl + getHeader() + BeatmapUtils.nl + BeatmapUtils.convertListToString(hitObjects);
+	}
+
+	public void addTimingHitsound(TimingSection timingSection) {
+		for (HitObject hitObject : hitObjects) {
+			hitObject.applyTimingPoint(timingSection.getTimingPoints());
+		}
 	}
 }

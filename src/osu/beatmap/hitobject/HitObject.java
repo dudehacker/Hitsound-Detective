@@ -18,14 +18,19 @@ public class HitObject implements Cloneable {
 	private int ypos = 192;
 	private long startTime;
 	private String hitSound;
+
 	private int volume;
-	private int column;
+	private int timingPointVolume = 70;
+
 	private HitsoundType whistle_finish_clap = HitsoundType.HITNORMAL;
+
 	private int setID = 0; // X in hit-hitnormalX.wav
+	private int timingPointSetID = 0;
+
 	private Addition addition = Addition.AUTO;
+
 	private SampleSet sampleSet = SampleSet.AUTO;
 	private SampleSet timingPointSampleSet = SampleSet.SOFT;
-	private int timingPointVolume = 70;
 
 	// 64,192,708, 1, 2, 3 :2 :0 :0:
 	// x, y ,t, type,whistle, sampleset:addition:setID:volume:
@@ -49,7 +54,6 @@ public class HitObject implements Cloneable {
 
 	public HitObject(HitObject hitObject) {
 		this.addition = hitObject.addition;
-		this.column = hitObject.column;
 		this.endLN = hitObject.endLN;
 		this.hitSound = hitObject.hitSound;
 		this.sampleSet = hitObject.sampleSet;
@@ -57,12 +61,14 @@ public class HitObject implements Cloneable {
 		this.startTime = hitObject.startTime;
 		this.timingPointSampleSet = hitObject.timingPointSampleSet;
 		this.timingPointVolume = hitObject.timingPointVolume;
+		this.timingPointSetID = hitObject.timingPointSetID;
 		this.type = hitObject.type;
 		this.volume = hitObject.volume;
 		this.whistle_finish_clap = hitObject.whistle_finish_clap;
 		this.xpos = hitObject.xpos;
+		this.ypos = hitObject.ypos;
 	}
-	
+
 	public HitObject(String line) throws Exception {
 		if (line != null && line.contains(",")) {
 			String[] parts = line.split(Pattern.quote(","));
@@ -89,7 +95,7 @@ public class HitObject implements Cloneable {
 			throw new Exception(line);
 		}
 	}
-	
+
 	private static int getVolumeFromFullHitSoundString(String hs) {
 		int vol = 0;
 		try {
@@ -114,7 +120,7 @@ public class HitObject implements Cloneable {
 		return output;
 	}
 
-	public void convertColumnIDtoXpos(int KeyCount) {
+	public void convertColumnIDtoXpos(int column, int KeyCount) {
 		double columnWidth = 512.0 / KeyCount;
 		xpos = (int) Math.round(column * columnWidth) + 10;
 	}
@@ -209,6 +215,9 @@ public class HitObject implements Cloneable {
 			return false;
 		if (setID != other.setID)
 			return false;
+		if (timingPointSetID != other.timingPointSetID) {
+			return false;
+		}
 		if (startTime != other.startTime)
 			return false;
 		if (timingPointSampleSet != other.timingPointSampleSet)
@@ -229,7 +238,7 @@ public class HitObject implements Cloneable {
 	public List<Sample> toSample() {
 		List<Sample> output = new ArrayList<>();
 
-		if (hitSound.contains(".wav")) {
+		if (hasWAV_HS()) {
 			Sample s = new Sample(startTime, hitSound, volume);
 			output.add(s);
 
@@ -237,8 +246,8 @@ public class HitObject implements Cloneable {
 			String tempHS = "";
 
 			String id = "";
-			if (setID > 1) {
-				id += setID;
+			if (getEffectiveSetID() > 1) {
+				id += getEffectiveSetID();
 			}
 
 			// Apply SampleSet
@@ -247,11 +256,7 @@ public class HitObject implements Cloneable {
 				System.exit(0);
 			}
 
-			if (sampleSet == SampleSet.AUTO) {
-				tempHS = timingPointSampleSet.toString() + "-";
-			} else {
-				tempHS = sampleSet.toString() + "-";
-			}
+			tempHS = getEffectiveSampleSet().toString() + "-";
 
 			// Apply Addition
 			if (whistle_finish_clap != HitsoundType.HITNORMAL) {
@@ -263,23 +268,47 @@ public class HitObject implements Cloneable {
 			// Apply Hitsound Type
 			if (whistle_finish_clap.toString() == null) { // split
 				for (HitsoundType type : whistle_finish_clap.split()) {
-					output.add(new Sample(startTime, tempHS + type.toString() + id + ".wav", timingPointVolume));
+					output.add(new Sample(startTime, tempHS + type.toString() + id + ".wav", getEffectiveVolume()));
 				}
 			} else {
 				tempHS += whistle_finish_clap.toString() + id + ".wav";
-				output.add(new Sample(startTime, tempHS, timingPointVolume));
+				output.add(new Sample(startTime, tempHS, getEffectiveVolume()));
 			}
 
 		}
 		return output;
 	}
 
+	private int getEffectiveSetID() {
+		if (setID == 0 && !hasWAV_HS()) {
+			return timingPointSetID;
+		} else {
+			return setID;
+		}
+	}
+
+	private int getEffectiveVolume() {
+		if (volume == 0 && !hasWAV_HS()) {
+			return timingPointVolume;
+		} else {
+			return volume;
+		}
+	}
+
+	private SampleSet getEffectiveSampleSet() {
+		if (sampleSet == SampleSet.AUTO && !hasWAV_HS()) {
+			return timingPointSampleSet;
+		} else {
+			return sampleSet;
+		}
+	}
+
 	@Override
 	public String toString() {
-		if (type != 128) {
+		if (!isLN(type)) {
 			// for a single note
-			return "" + xpos + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue()
-					+ "," + sampleSet.getValue() + ":" + addition.getValue() + ":0:" + volume + ":" + hitSound;
+			return "" + xpos + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue() + ","
+					+ sampleSet.getValue() + ":" + addition.getValue() + ":0:" + volume + ":" + hitSound;
 		}
 		// for a LN
 		return "" + xpos + "," + ypos + "," + startTime + "," + type + "," + whistle_finish_clap.getValue() + ","
@@ -339,21 +368,10 @@ public class HitObject implements Cloneable {
 		applyTimingPoint(timingPoints.get(timingPoints.size() - 1));
 	}
 
-	// only for default HS
 	private void applyTimingPoint(Timing tp) {
-		if (volume == 0) {
-			timingPointVolume = tp.getVolume();
-		}
-		if (sampleSet == SampleSet.AUTO) {
-			timingPointSampleSet = tp.getSampleSet();
-		}
-		if (setID == 0) {
-			setID = tp.getSetID();
-		}
-	}
-
-	public int getTimingPointVolume() {
-		return timingPointVolume;
+		timingPointVolume = tp.getVolume();
+		timingPointSampleSet = tp.getSampleSet();
+		timingPointSetID = tp.getSetID();
 	}
 
 	public void copyHS(HitObject input) {
@@ -365,6 +383,7 @@ public class HitObject implements Cloneable {
 		addition = input.addition;
 		timingPointVolume = input.timingPointVolume;
 		timingPointSampleSet = input.timingPointSampleSet;
+		timingPointSetID = input.timingPointSetID;
 	}
 
 	public boolean isMuted() {
@@ -388,15 +407,4 @@ public class HitObject implements Cloneable {
 		}
 	};
 
-	public Addition getAddition() {
-		return this.addition;
-	}
-
-	public HitsoundType getWhistleFinishClap() {
-		return this.whistle_finish_clap;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
 }
