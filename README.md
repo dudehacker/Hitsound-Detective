@@ -8,7 +8,7 @@ Check hitsound issues in osu!mania maps
 2. The result will be displayed as hyperlink, clicking it will direct you to the note in osu editor. 
 
 ## Download
-https://drive.google.com/open?id=1a1rDu9wMDM8re2qUGNXRf8OwJst9W7ht
+https://drive.google.com/open?id=1KpFyeb0lEAZkhLb0kZuzkUHoO0tlkt-O
 
 ## Usage
 1. Check unused hitsound
@@ -19,6 +19,9 @@ https://drive.google.com/open?id=1a1rDu9wMDM8re2qUGNXRf8OwJst9W7ht
 Note: support WFC stacked on 1 note, custom hitsound and additions
 
 ## Change Log
+
+###### Update: Jan 13, 2019
+Added check for duplicate hitsound in a chord (including SB)
 
 ###### Update: Jan 10, 2019
 Fixed bug Sampleset = None causing program to crash

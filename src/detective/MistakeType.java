@@ -10,7 +10,8 @@ public enum MistakeType {
 	SameOffsetTiming("Same Offset Timing"),
 	UnusedGreenTiming("Unused timing"),
 	MissingImage("Bg image is missing"),
-	BadResolutionImage("Bg image must be within " + ImageDetective.MAX_WIDTH + "x"+ ImageDetective.MAX_HEIGHT + " pixels")
+	BadResolutionImage("Bg image must be within " + ImageDetective.MAX_WIDTH + "x"+ ImageDetective.MAX_HEIGHT + " pixels"), 
+	DuplicateHitsound("Duplicate Hitsound")
 	;
 
 	private final String value;

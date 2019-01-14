@@ -118,6 +118,10 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 				if (chord.SbHasSoundWhenHoIsEmpty()) {
 					mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.SBwhenNoNote));
 				}
+				
+				if (chord.containsDuplicateHitsound()) {
+					mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.DuplicateHitsound));
+				}
 
 				if (!sourceDifficulty.equals(targetDifficulty)) {
 					int i = -1;
@@ -126,7 +130,7 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 						sourceChord = sourceChords.get(chord.getStartTime()+i);
 						i++;
 					}
-
+					
 					if (!chord.containsHitsounds(sourceChord)) {
 						mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.Inconsistency));
 					}

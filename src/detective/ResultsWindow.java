@@ -27,7 +27,7 @@ public class ResultsWindow extends JFrame {
 
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
-	private static final String VERSION = "v20180825";
+	private static final String VERSION = "v20190113";
 	private static final String A_HREF = "<a href=\"";
 	private static final String HREF_CLOSED = "\">";
 	private static final String HREF_END = "</a>";
