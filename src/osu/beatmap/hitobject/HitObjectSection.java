@@ -9,11 +9,14 @@ import util.BeatmapUtils;
 
 public final class HitObjectSection extends Section {
 
-	private List<HitObject> hitObjects;
+	private List<HitObject> hitObjects = new ArrayList<>();;
 
 	public HitObjectSection() {
 		super("[HitObjects]");
-		hitObjects = new ArrayList<>();
+	}
+	
+	public List<HitObject> getHitObjects() {
+		return hitObjects;
 	}
 
 	public void init(String[] lines) {
@@ -36,5 +39,12 @@ public final class HitObjectSection extends Section {
 		for (HitObject hitObject : hitObjects) {
 			hitObject.applyTimingPoint(timingSection.getTimingPoints());
 		}
+	}
+
+	public HitObjectSection clearHitsound() {
+		for (HitObject hitObject: hitObjects) {
+			hitObject.clearHS();
+		}
+		return this;
 	}
 }

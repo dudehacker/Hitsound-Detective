@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -43,6 +42,7 @@ public class BeatmapUtils {
 	public static String doubleToIntString(Double doubleValue) {
 		return Double.toString(doubleValue).split(Pattern.quote(".0"))[0];
 	}
+	
 
 	public static Map<Long, Chord> convertToChordMapWithHitsound(List<HitObject> hitObjects, List<Sample> SB) {
 		Map<Long, Chord> output = new TreeMap<Long, Chord>();
@@ -147,110 +147,6 @@ public class BeatmapUtils {
 		return output;
 	}
 
-	public static ArrayList<Sample> getSamples(File f) throws Exception {
-		ArrayList<Sample> output = new ArrayList<Sample>();
-		if (f == null || !(f.exists())) {
-			// error reading file
-		}
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				// read line by line
-				if (line.contains("Sample,")) {
-					String[] parts = line.split(",");
-					long startTime = Long.parseLong(parts[1]);
-					String hs = parts[3];
-					hs = hs.substring(1, hs.length() - 1);
-					int vol = Integer.parseInt(parts[4]);
-					Sample s = new Sample(startTime, hs, vol);
-					output.add(s);
-				}
-			}
-		}
-		Collections.sort(output, Sample.StartTimeComparator);
-		return output;
-	}
-
-	public static int getMode(File f) throws Exception {
-		int mode = -1;
-		System.out.println(f.getAbsolutePath());
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				// read line by line
-				if (line.contains("Mode: ")) {
-					mode = Integer.parseInt(line.substring(6));
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return mode;
-	}
-
-	public static String[] getAllInfo(File f) throws Exception {
-		String[] output = new String[4];
-		String generalInfo = "";
-		String sampleInfo = "";
-		String timingInfo = "";
-		String hitObjectsInfo = "";
-		if (f == null || !(f.exists())) {
-			// error reading file
-		}
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), "UTF-8"))) {
-			String line;
-			int sectionID = 0;
-			while ((line = br.readLine()) != null) {
-				// read line by line
-				switch (sectionID) {
-				case 0:
-					// General stuff
-
-					if (line.contains("Storyboard Sound Samples")) {
-						sectionID = 1;
-						sampleInfo += line + nl;
-					} else if (line.contains("Mode :")) {
-						int mode = Integer.parseInt(line.substring(6));
-						if (mode != SUPPORTED_PLAY_MODE) {
-							String errMsg = "The currently supported mode is mania";
-							JOptionPane.showMessageDialog(null, errMsg);
-							System.exit(-1);
-						}
-					}
-					generalInfo += line + nl;
-					break;
-				case 1:
-					// Samples
-					if (line.equals("[TimingPoints]")) {
-						sectionID = 2;
-						timingInfo += line + nl;
-					} else {
-						sampleInfo += line + nl;
-					}
-					break;
-
-				case 2:
-					// timing points
-					if (line.contains("[HitObjects]")) {
-						hitObjectsInfo += line + nl;
-						sectionID = 3;
-					}
-					timingInfo += line + nl;
-					break;
-
-				case 3:
-					// Hit Objects
-					hitObjectsInfo += line + nl;
-					break;
-				}
-			}
-		}
-		output[0] = generalInfo;
-		output[1] = sampleInfo;
-		output[2] = timingInfo;
-		output[3] = hitObjectsInfo;
-		return output;
-	}
 
 	public static File getOsuFile(String path) {
 		File f = null;

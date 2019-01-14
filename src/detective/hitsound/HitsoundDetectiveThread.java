@@ -3,7 +3,9 @@ package detective.hitsound;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.TreeSet;
 import detective.Main;
 import detective.TimedMistake;
 import detective.MistakeType;
+import osu.beatmap.Beatmap;
 import osu.beatmap.Chord;
 import osu.beatmap.event.Sample;
 import osu.beatmap.hitobject.HitObject;
@@ -22,17 +25,24 @@ import util.BeatmapUtils;
 
 public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDetectiveThread> {
 
-	private File sourceDifficulty;
-	private File targetDifficulty;
+	private Beatmap sourceDifficulty;
+	private Beatmap targetDifficulty;
+	private File targetFile;
 	private Thread t;
-	private int difficultyLevel;
 
 	private List<TimedMistake> mistakes = new ArrayList<>();
 	private Set<String> usedHitsounds = new TreeSet<>();
 
 	public HitsoundDetectiveThread(File source, File target) {
-		sourceDifficulty = source;
-		targetDifficulty = target;
+		targetFile = target;
+		try {
+			sourceDifficulty = new Beatmap(source);
+			targetDifficulty = new Beatmap(target);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -52,7 +62,7 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 	}
 
 	private void checkUnusedTimings() throws Exception {
-		List<Timing> timings = BeatmapUtils.getTimingPoints(targetDifficulty);
+		List<Timing> timings = targetDifficulty.getTimingSection().getTimingPoints();
 		for (int i = 0; i < timings.size(); i++) {
 			if (i != 0) {
 				Timing t = timings.get(i);
@@ -73,14 +83,13 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 		try {
 
 			checkUnusedTimings();
+			
+			List<HitObject> sourceHO = sourceDifficulty.getHitObjectSection().getHitObjects();
+			List<HitObject> targetHO = targetDifficulty.getHitObjectSection().getHitObjects();
 
-			ArrayList<HitObject> sourceHO = BeatmapUtils.getListOfHitObjects(sourceDifficulty, false);
-			ArrayList<HitObject> targetHO = BeatmapUtils.getListOfHitObjects(targetDifficulty, false);
 
-			difficultyLevel = targetHO.size();
-
-			ArrayList<Sample> sourceSB = BeatmapUtils.getSamples(sourceDifficulty);
-			ArrayList<Sample> targetSB = BeatmapUtils.getSamples(targetDifficulty);
+			List<Sample> sourceSB = sourceDifficulty.getEventSection().getSamples();
+			List<Sample> targetSB = targetDifficulty.getEventSection().getSamples();
 
 			// check for used hitsounds
 			for (HitObject ho : targetHO) {
@@ -136,7 +145,7 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 
 	public void start() {
 		if (t == null) {
-			t = new Thread(this, "Thread " + targetDifficulty.getName());
+			t = new Thread(this, "Thread " + targetFile.getName());
 			t.setPriority(10);
 			t.start();
 		}
@@ -152,7 +161,7 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 
 	public String getName() {
 		try (BufferedReader br = new BufferedReader(
-				new InputStreamReader(new FileInputStream(targetDifficulty), "UTF-8"))) {
+				new InputStreamReader(new FileInputStream(targetFile), "UTF-8"))) {
 			String line;
 			while ((line = br.readLine()) != null) {
 				// read line by line
@@ -168,6 +177,6 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 
 	@Override
 	public int compareTo(HitsoundDetectiveThread other) {
-		return this.difficultyLevel - other.difficultyLevel;
+		return this.targetDifficulty.getHitObjectSection().getHitObjects().size() - other.targetDifficulty.getHitObjectSection().getHitObjects().size();
 	}
 }

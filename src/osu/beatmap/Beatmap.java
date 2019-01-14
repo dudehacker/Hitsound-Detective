@@ -116,6 +116,12 @@ public final class Beatmap {
 		String split2 = split1.split(Pattern.quote(section2.getHeader()))[0];
 		return split2;
 	}
+	
+	public Beatmap clearHitsounds() {
+		getEventSection().getSamples().clear();
+		getHitObjectSection().clearHitsound();
+		return this;
+	}
 
 	@Override
 	public String toString() {
