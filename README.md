@@ -15,6 +15,7 @@ https://drive.google.com/open?id=1KpFyeb0lEAZkhLb0kZuzkUHoO0tlkt-O
 2. Check muted hitsound or Storyboard sample
 3. Check hitsound inconsistency
 4. Check missing hitsound (except hitnormal)
+5. Check duplicate hitsound (multiple same sound in a chord)
 
 Note: support WFC stacked on 1 note, custom hitsound and additions
 
