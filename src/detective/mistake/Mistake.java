@@ -1,4 +1,6 @@
-package detective;
+package detective.mistake;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Mistake implements Comparable<Mistake>{
 
@@ -8,8 +10,14 @@ public class Mistake implements Comparable<Mistake>{
 		this.description = description;
 	}
 	
+	@JsonProperty("text")
 	public String getDescription() {
 		return description.toString();
+	}
+	
+	@JsonProperty("type")
+	public String getSeverity(){
+		return description.getSeverity().toString();
 	}
 
 	@Override

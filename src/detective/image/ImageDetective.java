@@ -7,8 +7,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
-import detective.Mistake;
-import detective.MistakeType;
+import detective.mistake.Mistake;
+import detective.mistake.MistakeType;
 
 public class ImageDetective{
 	

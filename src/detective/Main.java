@@ -16,6 +16,7 @@ import java.util.Set;
 
 import detective.hitsound.HitsoundDetectiveThread;
 import detective.image.ImageDetective;
+import detective.mistake.Mistake;
 import osu.beatmap.Beatmap;
 import osu.beatmap.general.Mode;
 import util.BeatmapUtils;

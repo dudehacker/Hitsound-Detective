@@ -15,7 +15,7 @@ import java.util.TreeSet;
 
 import detective.Main;
 import detective.TimedMistake;
-import detective.MistakeType;
+import detective.mistake.MistakeType;
 import osu.beatmap.Beatmap;
 import osu.beatmap.Chord;
 import osu.beatmap.event.Sample;

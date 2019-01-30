@@ -1,7 +1,14 @@
 package detective;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import detective.mistake.Mistake;
+import detective.mistake.MistakeType;
+
 public class TimedMistake extends Mistake  {
 	
+
 	private long time = -1;
 	
 	public TimedMistake(long time, MistakeType description) {
@@ -9,10 +16,17 @@ public class TimedMistake extends Mistake  {
 		this.time = time;
 	}
 	
+	@JsonIgnore
 	public long getTime() {
 		return time;
 	}
 	
+	@JsonProperty("time")
+	public String getFormattedTime(){
+		return convertTiming();
+	}
+	
+	@JsonIgnore
 	public String getURL() {
 		String hyperlink = "osu://edit/" + convertTiming();
 		return hyperlink;
