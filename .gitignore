@@ -1,4 +1,8 @@
 .settings
+*.class
+*.log
+.classpath
+.project
 bin
 Hitsound Detective config.properties
 /target/
