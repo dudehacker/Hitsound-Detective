@@ -1,3 +1,4 @@
 .settings
 bin
 Hitsound Detective config.properties
+/target/
