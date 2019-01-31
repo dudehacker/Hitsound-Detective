@@ -21,7 +21,9 @@ public class BeatmapDownloader {
 		//TODO run hitsound detective
 		
 		//sample response
-		
+		res.setArtist("Unknown Artist");
+		res.setTitle("Unknown Title");
+		res.setMapper("Unknown Mapper");
 		Mod all = new Mod("All");
 		all.addMistake(new Mistake(MistakeType.MissingImage));
 		all.addMistake(new Mistake(MistakeType.BadResolutionImage));

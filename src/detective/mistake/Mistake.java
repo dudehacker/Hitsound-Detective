@@ -17,7 +17,7 @@ public class Mistake implements Comparable<Mistake>{
 	
 	@JsonProperty("type")
 	public String getSeverity(){
-		return description.getSeverity().toString();
+		return description.getSeverity().getlowerCaseString();
 	}
 
 	@Override

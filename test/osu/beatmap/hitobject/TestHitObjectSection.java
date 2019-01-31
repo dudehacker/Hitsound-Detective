@@ -1,6 +1,6 @@
 package osu.beatmap.hitobject;
 
-import static org.junit.Assert.assertEquals;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,7 +11,7 @@ import java.text.ParseException;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-
+import static org.junit.Assert.assertEquals;
 import osu.beatmap.Beatmap;
 
 public class TestHitObjectSection {

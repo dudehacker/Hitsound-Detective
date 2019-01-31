@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import detective.mistake.Mistake;
 
 public class Mod {
+	
 	private String name;
 	
 	@JsonProperty("comments")
@@ -18,6 +19,7 @@ public class Mod {
 		mistakes = new ArrayList<>();
 	}
 
+	@JsonProperty("name")
 	public String getDifficulty() {
 		return name;
 	}

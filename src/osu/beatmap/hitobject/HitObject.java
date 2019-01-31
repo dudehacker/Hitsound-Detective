@@ -136,18 +136,7 @@ public class HitObject implements Cloneable {
 	}
 
 	public static boolean isLN(int type) {
-		switch (type) {
-		case 1:
-		case 5:
-			return false;
-
-		case 128:
-		case 132:
-			return true;
-
-		default:
-			throw new IllegalArgumentException();
-		}
+		return type >> 7 == 1;
 	}
 
 	public boolean hasWAV_HS() {
