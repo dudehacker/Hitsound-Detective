@@ -1,4 +1,4 @@
-package osu;
+package osu.beatmap.hitobject;
 import org.junit.Test;
 
 import osu.beatmap.hitobject.HitsoundType;

@@ -33,6 +33,6 @@ public class TestHitObjectSection {
 		String split1 = text.split(Pattern.quote("[HitObjects]"))[1];
 		
 		Beatmap b = new Beatmap(f);
-		assertEquals("[HitObjects]" + split1, b.getHitObjectSection().toString() + System.lineSeparator());
+		assertEquals(System.lineSeparator()+"[HitObjects]" + split1 + System.lineSeparator(), b.getHitObjectSection().toString() + System.lineSeparator());
 	}
 }

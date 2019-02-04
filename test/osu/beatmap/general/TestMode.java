@@ -1,4 +1,4 @@
-package osu;
+package osu.beatmap.general;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
