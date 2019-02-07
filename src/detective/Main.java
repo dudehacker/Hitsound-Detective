@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -115,9 +116,18 @@ public class Main {
 			};
 			Set<String> physicalHS = new HashSet<>();
 			File[] wavFiles = new File(OsuPath).listFiles(hsFilter);
+			
+			// Find wrong format hitsound
+			Set<String> wrongFormatHitSounds = new HashSet<>();
+
 			for (File wav : wavFiles) {
 				physicalHS.add(wav.getName());
+				if (!wav.getName().endsWith(".wav")) {
+					wrongFormatHitSounds.add(wav.getName());
+				}
 			}
+			
+			frame.addTabForAllDifficulties("Wrong format hitsound",wrongFormatHitSounds);
 			
 			// Find un-used hitsound
 			Set<String> unusedHitsounds = new HashSet<>(physicalHS);
