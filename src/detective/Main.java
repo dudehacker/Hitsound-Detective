@@ -103,10 +103,10 @@ public class Main {
 			}
 
 			// get actual Hitsound
-			FilenameFilter wavFilter = new FilenameFilter() {
+			FilenameFilter hsFilter = new FilenameFilter() {
 				public boolean accept(File dir, String name) {
 					String lowercaseName = name.toLowerCase();
-					if (lowercaseName.endsWith(".wav")) {
+					if (lowercaseName.endsWith(".wav") || lowercaseName.endsWith(".ogg")) {
 						return true;
 					} else {
 						return false;
@@ -114,7 +114,7 @@ public class Main {
 				}
 			};
 			Set<String> physicalHS = new HashSet<>();
-			File[] wavFiles = new File(OsuPath).listFiles(wavFilter);
+			File[] wavFiles = new File(OsuPath).listFiles(hsFilter);
 			for (File wav : wavFiles) {
 				physicalHS.add(wav.getName());
 			}
@@ -126,6 +126,8 @@ public class Main {
 			
 			// Find missing hitsound
 			Set<String> missingHitsounds = new HashSet<>(usedHitsound);
+			System.out.println("used\n" + usedHitsound.toString());
+			System.out.println("exist\n"+physicalHS.toString());
 			missingHitsounds.removeAll(physicalHS);
 			frame.addTabForAllDifficulties("Missing hitsound",missingHitsounds);
 
