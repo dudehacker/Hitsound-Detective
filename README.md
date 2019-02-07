@@ -21,6 +21,9 @@ Note: support WFC stacked on 1 note, custom hitsound and additions
 
 ## Change Log
 
+###### Update: Feb 06, 2019
+Added check for ogg
+
 ###### Update: Jan 13, 2019
 Added check for duplicate hitsound in a chord (including SB)
 
