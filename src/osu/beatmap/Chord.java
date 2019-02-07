@@ -10,10 +10,13 @@ import osu.beatmap.hitobject.HitObject;
 public class Chord {
 	private ArrayList<HitObject> list_HO;
 	private ArrayList<Sample> list_SB;
+	
+	private long startTime;
 
 	public Chord() {
 		list_HO = new ArrayList<HitObject>();
 		list_SB = new ArrayList<Sample>();
+		startTime = -1;
 	}
 
 	public long getStartTime() {
@@ -33,6 +36,7 @@ public class Chord {
 			}
 		}
 		for (HitObject hitObject : list_HO) {
+
 			if (hitObject.hasHitsound()) {
 				for (String hs : hitObject.toHitsoundString()) {
 					if (!set.add(hs)){
@@ -101,6 +105,9 @@ public class Chord {
 	}
 
 	public void add(HitObject ho) {
+		if (startTime != -1 && ho.getStartTime()!=startTime ) {
+			throw new IllegalArgumentException(ho.toString());
+		}
 		list_HO.add(ho);
 	}
 
@@ -117,6 +124,7 @@ public class Chord {
 		for (HitObject ho : list_HO) {
 			newChord.add(ho.clone());
 		}
+		newChord.startTime = startTime;
 		return newChord;
 	}
 

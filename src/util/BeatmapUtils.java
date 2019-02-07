@@ -228,7 +228,7 @@ public class BeatmapUtils {
 		List<HitObject> wavHS = new ArrayList<HitObject>();
 		List<HitObject> defaultHS = new ArrayList<HitObject>();
 		for (HitObject ho : hitObjects) {
-			if (ho.hasWAV_HS()) {
+			if (ho.hasCustom_HS()) {
 				wavHS.add(ho.clone());
 			} else {
 				if (ho.hasDefault_HS()) {

@@ -139,15 +139,12 @@ public class HitObject implements Cloneable {
 		return type >> 7 == 1;
 	}
 
-	public boolean hasWAV_HS() {
-		if (hitSound.contains(".wav")) {
-			return true;
-		}
-		return false;
+	public boolean hasCustom_HS() {
+		return !hitSound.isEmpty();
 	}
 
 	public boolean hasDefault_HS() {
-		return whistle_finish_clap != HitsoundType.HITNORMAL && !hasWAV_HS();
+		return whistle_finish_clap != HitsoundType.HITNORMAL && !hasCustom_HS();
 	}
 
 	public HitObject clone() {
@@ -227,7 +224,7 @@ public class HitObject implements Cloneable {
 	public List<Sample> toSample() {
 		List<Sample> output = new ArrayList<>();
 
-		if (hasWAV_HS()) {
+		if (hasCustom_HS()) {
 			Sample s = new Sample(startTime, hitSound, volume);
 			output.add(s);
 
@@ -269,7 +266,7 @@ public class HitObject implements Cloneable {
 	}
 
 	private int getEffectiveSetID() {
-		if (setID == 0 && !hasWAV_HS()) {
+		if (setID == 0 && !hasCustom_HS()) {
 			return timingPointSetID;
 		} else {
 			return setID;
@@ -277,7 +274,7 @@ public class HitObject implements Cloneable {
 	}
 
 	private int getEffectiveVolume() {
-		if (volume == 0 && !hasWAV_HS()) {
+		if (volume == 0 && !hasCustom_HS()) {
 			return timingPointVolume;
 		} else {
 			return volume;
@@ -285,7 +282,7 @@ public class HitObject implements Cloneable {
 	}
 
 	private SampleSet getEffectiveSampleSet() {
-		if (sampleSet == SampleSet.AUTO && !hasWAV_HS()) {
+		if (sampleSet == SampleSet.AUTO && !hasCustom_HS()) {
 			return timingPointSampleSet;
 		} else {
 			return sampleSet;
@@ -376,14 +373,14 @@ public class HitObject implements Cloneable {
 	}
 
 	public boolean isMuted() {
-		if (hasWAV_HS() && volume == 0) {
+		if (hasCustom_HS() && volume == 0) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean hasHitsound() {
-		return hasWAV_HS() || whistle_finish_clap != HitsoundType.HITNORMAL;
+		return hasCustom_HS() || whistle_finish_clap != HitsoundType.HITNORMAL;
 	}
 
 	public static Comparator<HitObject> ColumnComparator = new Comparator<HitObject>() {
