@@ -79,7 +79,13 @@ public class Timing {
 	};
 	
 	public boolean isUnused(Timing previousTiming) {
+		if (offset != previousTiming.offset) {
+			// time
+			return false;
+		}
+		
 		if (!isInherited()) {
+			// red
 			return false;
 		}
 		
@@ -111,8 +117,10 @@ public class Timing {
 		if (kiai != previousTiming.kiai) {
 			return false;
 		}
+		System.out.println("this " + isInherited());
+		System.out.println("previous " + previousTiming.isInherited());
 		
-		return true;
+		return (previousTiming.isInherited());
 	}
 	
 	public boolean isInherited() {
