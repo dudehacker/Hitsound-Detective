@@ -16,12 +16,8 @@ public class Controller {
 	@CrossOrigin
     @RequestMapping("/mod")
     public ModResponse greeting(@RequestParam(value="url") String url) {
-    	ModResponse res = BeatmapDownloader.modMap(url);
-    	if (!url.contains("https://osu")){  //TODO use regex
-    		throw new InvalidUrlException(url);
-    	} else if (res == null){
-    		throw new DeletedBeatmapException(url);
-    	}
+		ModResponse res = BeatmapDownloader.modMap(url);
+    	
     	return res;
     }
     
