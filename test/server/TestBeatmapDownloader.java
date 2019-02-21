@@ -2,14 +2,37 @@ package server;
 
 import static org.junit.Assert.*;
 
-import org.junit.Test;
+import java.util.Date;
+
+import org.junit.*;
+
+import server.model.osu.api.BeatmapInfoJSON;
 
 public class TestBeatmapDownloader {
 	
+	String beatmapSet = "914328";
+	String beatmapID = "1940248";
+	
 	@Test
-	public void test_download_beatmap(){
-		String beatmapSet = "914328";
-		BeatmapDownloader.downloadBeatmap(beatmapSet);
+	public void testDownload(){
+		String osz = BeatmapDownloader.downloadBeatmap(beatmapSet);
+		BeatmapUnzip.unzip(osz);
+	}
+	
+	@Ignore
+	@Test
+	public void test_delete_folder(){
+		BeatmapDownloader.deleteBeatmapFolder(beatmapSet);
+	}
+	
+	@Ignore
+	@Test
+	public void test_isOutdated(){
+		BeatmapInfoJSON beatmap = OsuAPI.getBeatmapInfoFromBeatmapID(beatmapID).get(0);
+		String beatmapSet = beatmap.getBeatmapset_id();
+		Date updated = beatmap.getLast_update();
+		boolean outdated = BeatmapDownloader.isLocalOutdated(beatmapSet,updated);
+		System.out.println(outdated);
 	}
 	
 	@Test

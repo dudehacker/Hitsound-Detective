@@ -5,13 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class BeatmapUnzip {
 	
-	    public static void unzip(String fileZip) {
-	        File destDir = new File(new File(fileZip).getParent() + "\\" + new File(fileZip).getName().replace(".osz", ""));
+	    public static File unzip(String fileZip) {
+	    	File zipFile = new File(fileZip);
+	        File destDir = new File(zipFile.getParent() + "\\" + zipFile.getName().replace(".osz", ""));
 	        destDir.mkdirs();
 	        byte[] buffer = new byte[1024];
 	        
@@ -27,13 +29,18 @@ public class BeatmapUnzip {
 		            fos.close();
 		            zipEntry = zis.getNextEntry();
 		        }
+		        
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-	        
-
+			try {
+				Files.delete(zipFile.toPath());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return destDir;
 
 	    }
 	     

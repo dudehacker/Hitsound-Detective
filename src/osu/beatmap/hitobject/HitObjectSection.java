@@ -18,6 +18,10 @@ public final class HitObjectSection extends Section {
 	public List<HitObject> getHitObjects() {
 		return hitObjects;
 	}
+	
+	public int getHsCount(){
+		return (int) hitObjects.stream().filter(HitObject::hasHitsound).count();
+	}
 
 	public void init(String[] lines) {
 		for (String line : lines) {

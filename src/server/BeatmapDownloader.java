@@ -1,15 +1,17 @@
 package server;
-
 import java.io.File;
-import java.text.SimpleDateFormat;
+import java.io.IOException;
+import java.util.Date;
 import java.util.regex.Pattern;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import detective.Main;
 import detective.TimedMistake;
 import detective.mistake.Mistake;
 import detective.mistake.MistakeType;
@@ -17,6 +19,7 @@ import server.model.Mod;
 import server.model.ModResponse;
 import server.model.exception.DeletedBeatmapException;
 import server.model.exception.InvalidUrlException;
+import server.model.osu.api.BeatmapInfoJSON;
 
 public class BeatmapDownloader {
 
@@ -28,15 +31,23 @@ public class BeatmapDownloader {
 			driver = DriverUtilities.createDriver(false, true);
 		}
 	}
-	
-	static void waitForDownload(String beatmapSet){
+
+	static File getBeatmapFolder(String beatmapSet) {
 		File downloadFolder = new File(downloadPath);
-		boolean downloading = true;
-		while(downloading) {
-			for (File f : downloadFolder.listFiles()){
-				if (f.getName().startsWith(beatmapSet) && f.getName().endsWith(".osz")){
-					downloading = false;
-					break;
+		for (File f : downloadFolder.listFiles()) {
+			if (f.getName().startsWith(beatmapSet) && f.isDirectory()) {
+				return f;
+			}
+		}
+		return null;
+	}
+
+	static String waitForDownload(String beatmapSet) {
+		File downloadFolder = new File(downloadPath);
+		while (true) {
+			for (File f : downloadFolder.listFiles()) {
+				if (f.getName().startsWith(beatmapSet) && f.getName().endsWith(".osz")) {
+					return f.toString();
 				}
 			}
 			try {
@@ -60,15 +71,29 @@ public class BeatmapDownloader {
 
 	}
 
-	static void downloadBeatmap(String beatmapSet) {
+	static void deleteBeatmapFolder(String beatmapSet) {
+		File f = getBeatmapFolder(beatmapSet);
+		if (f == null){
+			return;
+		}
+		try {
+			FileUtils.deleteDirectory(f);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	static String downloadBeatmap(String beatmapSet) {
+		System.out.println("downloading beatmap " + beatmapSet);
 		initDriver();
 		login();
 		driver.navigate().to("https://osu.ppy.sh/beatmapsets/" + beatmapSet);
 		driver.findElement(By.className("js-beatmapset-download-link")).click();
-		waitForDownload(beatmapSet);
+		String osz = waitForDownload(beatmapSet);
 		driver.close();
 		driver.quit();
-		System.out.println("download finished");
+		System.out.println("download finished: " +osz);
+		return osz;
 	}
 
 	static void login() {
@@ -93,13 +118,28 @@ public class BeatmapDownloader {
 			throw new DeletedBeatmapException(url);
 		}
 
-
 		// Get beatmap from local or download
-		String beatmapSet = url.split("beatmapsets/")[1].split("#")[0];
-		System.out.println("beatmap set: " + beatmapSet);
-		
-		// TODO run hitsound detective
+		String beatmapID;
+		String beatmapSet;
 
+		if (url.contains("#mania")) {
+			beatmapID = url.split("#mania/")[1];
+		} else {
+			beatmapID = url.split("/b/")[1].split("?m=3")[0];
+		}
+		BeatmapInfoJSON beatmap = OsuAPI.getBeatmapInfoFromBeatmapID(beatmapID).get(0);
+		beatmapSet = beatmap.getBeatmapset_id();
+
+		Date updated = beatmap.getLast_update();
+		File folder = null;
+		if (isLocalOutdated(beatmapSet, updated)) {
+			deleteBeatmapFolder(beatmapSet);
+			String osz = BeatmapDownloader.downloadBeatmap(beatmapSet);
+			folder = BeatmapUnzip.unzip(osz);
+		}
+
+		// TODO run hitsound detective
+		
 		// sample response
 		ModResponse res = new ModResponse(url);
 		res.setArtist("Unknown Artist");
@@ -125,20 +165,18 @@ public class BeatmapDownloader {
 
 		return res;
 	}
-	
-	static boolean isLocalOutdated(String setId){
+
+	static boolean isLocalOutdated(String setId, Date updated) {
 		// get map update date
-		OsuAPI.getBeatmapInfoFromSetID(setId);
-		
-		File downloadFolder = new File(downloadPath);
-		for (File f : downloadFolder.listFiles()){
-			if (f.getName().startsWith(setId) && f.isDirectory()){
-				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-				
-				System.out.println("After Format : " + sdf.format(f.lastModified()));
-			}
+		System.out.println("Updated: " + updated);
+		// get local last modified date
+		File f = getBeatmapFolder(setId);
+		if (f == null){
+			return true;
 		}
-		return false;
+		Date lastModified = new Date(f.lastModified());
+		System.out.println("Last Modified: " + lastModified);
+		return lastModified.before(updated);
 	}
 
 }

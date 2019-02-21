@@ -52,7 +52,7 @@ public class OsuAPI {
 		return getBeatmap(url);
 	}
 
-	public static List<BeatmapInfoJSON> ssgetBeatmapInfoFromBeatmapID(String beatmapID) {
+	public static List<BeatmapInfoJSON> getBeatmapInfoFromBeatmapID(String beatmapID) {
 		initMapper();
 		String url = "https://osu.ppy.sh/api/get_beatmaps?k=" + API_KEY + "&b=" + beatmapID;
 		return getBeatmap(url);
