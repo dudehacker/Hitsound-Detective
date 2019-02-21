@@ -1,19 +1,12 @@
 package server;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.io.File;
 import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,6 +21,7 @@ import server.model.exception.InvalidUrlException;
 public class BeatmapDownloader {
 
 	private static WebDriver driver;
+	public static final String downloadPath = System.getProperty("user.dir") + "\\maps";
 
 	private static void initDriver() {
 		if (driver == null) {
@@ -36,7 +30,21 @@ public class BeatmapDownloader {
 	}
 	
 	static void waitForDownload(String beatmapSet){
-		
+		File downloadFolder = new File(downloadPath);
+		boolean downloading = true;
+		while(downloading) {
+			for (File f : downloadFolder.listFiles()){
+				if (f.getName().startsWith(beatmapSet) && f.getName().endsWith(".osz")){
+					downloading = false;
+					break;
+				}
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	static boolean checkUrl(String url) {
@@ -57,6 +65,10 @@ public class BeatmapDownloader {
 		login();
 		driver.navigate().to("https://osu.ppy.sh/beatmapsets/" + beatmapSet);
 		driver.findElement(By.className("js-beatmapset-download-link")).click();
+		waitForDownload(beatmapSet);
+		driver.close();
+		driver.quit();
+		System.out.println("download finished");
 	}
 
 	static void login() {
