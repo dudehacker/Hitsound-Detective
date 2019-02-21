@@ -1,6 +1,7 @@
 package server;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
@@ -8,7 +9,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.web.client.RestTemplate;
 
 import detective.TimedMistake;
 import detective.mistake.Mistake;
@@ -86,17 +86,6 @@ public class BeatmapDownloader {
 		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("page-mode__item")));
 	}
 
-	static String getBeatmapInfo(String beatmapSet) {
-		String api_key = System.getenv("api_key");
-		System.out.println(api_key);
-		String dl_url = "https://osu.ppy.sh/api/get_beatmaps?k=" + api_key + "&s=" + beatmapSet;
-
-		RestTemplate restTemplate = new RestTemplate();
-		String result = restTemplate.getForObject(dl_url, String.class);
-		System.out.println(result);
-		return result;
-	}
-
 	public static ModResponse modMap(String url) {
 		if (!checkUrl(url)) {
 			throw new InvalidUrlException(url);
@@ -104,15 +93,15 @@ public class BeatmapDownloader {
 			throw new DeletedBeatmapException(url);
 		}
 
-		ModResponse res = new ModResponse(url);
 
-		// download beatmap
+		// Get beatmap from local or download
 		String beatmapSet = url.split("beatmapsets/")[1].split("#")[0];
 		System.out.println("beatmap set: " + beatmapSet);
-
+		
 		// TODO run hitsound detective
 
 		// sample response
+		ModResponse res = new ModResponse(url);
 		res.setArtist("Unknown Artist");
 		res.setTitle("Unknown Title");
 		res.setMapper("Unknown Mapper");
@@ -135,6 +124,21 @@ public class BeatmapDownloader {
 		res.addTab(nm);
 
 		return res;
+	}
+	
+	static boolean isLocalOutdated(String setId){
+		// get map update date
+		OsuAPI.getBeatmapInfoFromSetID(setId);
+		
+		File downloadFolder = new File(downloadPath);
+		for (File f : downloadFolder.listFiles()){
+			if (f.getName().startsWith(setId) && f.isDirectory()){
+				SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+				
+				System.out.println("After Format : " + sdf.format(f.lastModified()));
+			}
+		}
+		return false;
 	}
 
 }
