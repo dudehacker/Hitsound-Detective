@@ -11,11 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import detective.Main;
-import detective.TimedMistake;
-import detective.mistake.Mistake;
-import detective.mistake.MistakeType;
-import server.model.Mod;
+import detective.HitsoundDetective;
 import server.model.ModResponse;
 import server.model.exception.DeletedBeatmapException;
 import server.model.exception.InvalidUrlException;
@@ -61,11 +57,11 @@ public class BeatmapDownloader {
 	static boolean checkUrl(String url) {
 		// new website
 		// https://osu.ppy.sh/beatmapsets/914328#mania/1940248
-		Pattern newWebsite = Pattern.compile("^https://osu\\.ppy\\.sh/beatmapsets/\\d{5,10}#mania/\\d{5,10}/?$");
+		Pattern newWebsite = Pattern.compile("^https://osu\\.ppy\\.sh/beatmapsets/\\d{5,10}(#mania(/\\d{5,10}/?)?)?$");
 
 		// old website
 		// https://osu.ppy.sh/b/1940248?m=3
-		Pattern oldWebsite = Pattern.compile("^https://osu\\.ppy\\.sh/b/\\d{5,10}\\?m=3$");
+		Pattern oldWebsite = Pattern.compile("^https://osu\\.ppy\\.sh/b/\\d{5,10}(\\?m=3)?$");
 
 		return (newWebsite.matcher(url).matches() || oldWebsite.matcher(url).matches());
 
@@ -114,56 +110,41 @@ public class BeatmapDownloader {
 	public static ModResponse modMap(String url) {
 		if (!checkUrl(url)) {
 			throw new InvalidUrlException(url);
-		} else if (url.contains("dead")) {
-			throw new DeletedBeatmapException(url);
 		}
 
 		// Get beatmap from local or download
-		String beatmapID;
 		String beatmapSet;
-
-		if (url.contains("#mania")) {
-			beatmapID = url.split("#mania/")[1];
+		BeatmapInfoJSON beatmap = null;
+		if (url.contains("/beatmapsets/")) {
+			beatmapSet = url.split("/beatmapsets/")[1];
+			if (beatmapSet.contains("#mania")){
+				beatmapSet = beatmapSet.split("#mania")[0];
+			}
+			beatmap = OsuAPI.getBeatmapInfoFromSetID(beatmapSet).get(0);
 		} else {
-			beatmapID = url.split("/b/")[1].split("?m=3")[0];
+			String beatmapID = url.split("/b/")[1];
+			if (beatmapID.contains("?=3")){
+				beatmapID = beatmapID.split("?m=3")[0];
+			}
+			beatmap = OsuAPI.getBeatmapInfoFromBeatmapID(beatmapID).get(0);
+			beatmapSet = beatmap.getBeatmapset_id();
 		}
-		BeatmapInfoJSON beatmap = OsuAPI.getBeatmapInfoFromBeatmapID(beatmapID).get(0);
-		beatmapSet = beatmap.getBeatmapset_id();
-
+		
+		if (beatmap == null){
+			throw new DeletedBeatmapException(url);
+		}
+		
 		Date updated = beatmap.getLast_update();
-		File folder = null;
+		File folder = HitsoundDetective.getFolder(beatmapSet);
 		if (isLocalOutdated(beatmapSet, updated)) {
 			deleteBeatmapFolder(beatmapSet);
 			String osz = BeatmapDownloader.downloadBeatmap(beatmapSet);
 			folder = BeatmapUnzip.unzip(osz);
 		}
 
-		// TODO run hitsound detective
-		
-		// sample response
-		ModResponse res = new ModResponse(url);
-		res.setArtist("Unknown Artist");
-		res.setTitle("Unknown Title");
-		res.setMapper("Unknown Mapper");
-		Mod all = new Mod("All");
-		all.addMistake(new Mistake(MistakeType.MissingImage));
-		all.addMistake(new Mistake(MistakeType.BadResolutionImage));
-		res.addTab(all);
-
-		Mod ez = new Mod("EZ");
-		ez.addMistake(new TimedMistake(230, MistakeType.MutedHO));
-		ez.addMistake(new TimedMistake(450, MistakeType.Inconsistency));
-		ez.addMistake(new TimedMistake(870, MistakeType.Inconsistency));
-		ez.addMistake(new TimedMistake(1020, MistakeType.SBwhenNoNote));
-		res.addTab(ez);
-
-		Mod nm = new Mod("NM");
-		nm.addMistake(new TimedMistake(100, MistakeType.UnusedGreenTiming));
-		nm.addMistake(new TimedMistake(200, MistakeType.DuplicateHitsound));
-		nm.addMistake(new TimedMistake(480, MistakeType.Inconsistency));
-		res.addTab(nm);
-
-		return res;
+		// run hitsound detective
+		HitsoundDetective hd = new HitsoundDetective(folder);
+		return hd.mod();
 	}
 
 	static boolean isLocalOutdated(String setId, Date updated) {

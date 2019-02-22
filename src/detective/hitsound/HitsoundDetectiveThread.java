@@ -1,10 +1,7 @@
 package detective.hitsound;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,27 +11,25 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import detective.Main;
-import detective.TimedMistake;
 import detective.mistake.MistakeType;
+import detective.mistake.TimedMistake;
 import osu.beatmap.Beatmap;
 import osu.beatmap.Chord;
 import osu.beatmap.event.Sample;
 import osu.beatmap.hitobject.HitObject;
+import osu.beatmap.metadata.MetadataSection;
 import osu.beatmap.timing.Timing;
 import util.BeatmapUtils;
 
-public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDetectiveThread> {
+public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThread> {
 
 	private Beatmap sourceDifficulty;
 	private Beatmap targetDifficulty;
-	private File targetFile;
-	private Thread t;
 
 	private List<TimedMistake> mistakes = new ArrayList<>();
 	private Set<String> usedHitsounds = new TreeSet<>();
 
 	public HitsoundDetectiveThread(File source, File target) {
-		targetFile = target;
 		try {
 			sourceDifficulty = new Beatmap(source);
 			targetDifficulty = new Beatmap(target);
@@ -78,7 +73,6 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 
 	}
 
-	@Override
 	public void run() {
 		try {
 
@@ -137,21 +131,11 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 				}
 			}
 
-			System.out.println(t.getName() + " has mistake count = " + mistakes.size());
+			System.out.println(getName() + " has mistake count = " + mistakes.size());
 			Collections.sort(mistakes);
 			Main.threadFinished();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-	
-
-
-	public void start() {
-		if (t == null) {
-			t = new Thread(this, "Thread " + targetFile.getName());
-			t.setPriority(10);
-			t.start();
 		}
 	}
 
@@ -164,23 +148,15 @@ public class HitsoundDetectiveThread implements Runnable, Comparable<HitsoundDet
 	}
 
 	public String getName() {
-		try (BufferedReader br = new BufferedReader(
-				new InputStreamReader(new FileInputStream(targetFile), "UTF-8"))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				// read line by line
-				if (line.contains("Version:")) {
-					return line.substring(line.indexOf(':') + 1, line.length());
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		return targetDifficulty.getMetadataSection().getProperty(MetadataSection.versionKey).toString();
 	}
 
 	@Override
 	public int compareTo(HitsoundDetectiveThread other) {
 		return this.targetDifficulty.getHitObjectSection().getHitObjects().size() - other.targetDifficulty.getHitObjectSection().getHitObjects().size();
+	}
+
+	public int getNoteCount() {
+		return targetDifficulty.getHitObjectSection().getHitObjects().size();
 	}
 }

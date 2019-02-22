@@ -11,7 +11,10 @@ public enum MistakeType {
 	SameOffsetTiming("Same Offset Timing",Severity.PROBLEM),
 	UnusedGreenTiming("Unused timing",Severity.PROBLEM),
 	MissingImage("Bg image is missing",Severity.PROBLEM),
-	BadResolutionImage("Bg image must be within " + ImageDetective.MAX_WIDTH + "x"+ ImageDetective.MAX_HEIGHT + " pixels", Severity.PROBLEM)
+	BadResolutionImage("Bg image must be within " + ImageDetective.MAX_WIDTH + "x"+ ImageDetective.MAX_HEIGHT + " pixels", Severity.PROBLEM),
+	MissingHitsound("Add missing hitsound sample",Severity.PROBLEM),
+	WrongFormatHitsound("Unrankeable format sample",Severity.PROBLEM),
+	UnusedHitsound("Remove un-used sample",Severity.PROBLEM)
 	;
 
 	private final String value;

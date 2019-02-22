@@ -13,10 +13,8 @@ public class Controller {
 	
 	@CrossOrigin
     @RequestMapping("/mod")
-    public ModResponse greeting(@RequestParam(value="url") String url) {
-		ModResponse res = BeatmapDownloader.modMap(url);
-    	
-    	return res;
+    public ModResponse mod(@RequestParam(value="url") String url) {
+    	return BeatmapDownloader.modMap(url);
     }
     
 }

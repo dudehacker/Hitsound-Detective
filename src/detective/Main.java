@@ -62,7 +62,7 @@ public class Main {
 					images.add(b.getEventSection().getBgImage());
 					HitsoundDetectiveThread hd = new HitsoundDetectiveThread(sourceFile, f);
 					threads.add(hd);
-					hd.start();
+					hd.run();
 				}
 			} catch (ParseException e) {
 //				e.printStackTrace();

@@ -30,7 +30,7 @@ public abstract class Section {
 		return header;
 	}
 
-	protected Object getProperty(Key key) {
+	public Object getProperty(Key key) {
 		return map.get(key);
 	}
 

@@ -1,10 +1,7 @@
-package detective;
+package detective.mistake;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import detective.mistake.Mistake;
-import detective.mistake.MistakeType;
 
 public class TimedMistake extends Mistake  {
 	
@@ -81,6 +78,11 @@ public class TimedMistake extends Mistake  {
 			return super.compareTo(other);
 		}
 		
+	}
+
+	@Override
+	public String toString() {
+		return "TimedMistake [time=" + time + "description="+description+"]";
 	}
 	
 }

@@ -5,14 +5,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Mistake implements Comparable<Mistake>{
 
 	protected MistakeType description;
+	protected String text;
 	
 	public Mistake(MistakeType description) {
+		this(description,"");
+	}
+	
+	@Override
+	public String toString() {
+		return "Mistake [description=" + description + ", text=" + text + "]";
+	}
+
+	public Mistake(MistakeType description, String text){
 		this.description = description;
+		this.text = text;
 	}
 	
 	@JsonProperty("text")
 	public String getDescription() {
-		return description.toString();
+		if (text.isEmpty()){
+			return description.toString();
+		} else {
+			return description.toString() + ": " + text;
+		}
+		
 	}
 	
 	@JsonProperty("type")
