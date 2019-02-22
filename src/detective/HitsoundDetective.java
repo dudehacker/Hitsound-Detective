@@ -88,8 +88,9 @@ public class HitsoundDetective {
 		File downloadFolder =  new File(BeatmapDownloader.downloadPath);
 		System.out.println(downloadFolder);
 		if (!downloadFolder.exists()){
-			downloadFolder.mkdirs();
+			System.out.println("created folder: " +downloadFolder.mkdirs());
 		}
+		System.out.println("folder exists: " +downloadFolder.exists());
 		File[] files = downloadFolder.listFiles((dir,name)-> {
 			File f = new File(dir,name);
 			return f.isDirectory() && f.getName().startsWith(setID);
