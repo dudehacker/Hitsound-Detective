@@ -29,8 +29,7 @@ public class TestHitsoundDetective {
 	
 	@Test
 	public void Test_Get_Osu_Files() {
-		HitsoundDetective hd = new HitsoundDetective(folder);
-		File[] files = hd.getOsuFiles();
+		File[] files = HitsoundDetective.getOsuFiles(folder);
 		assertEquals(files.length, 5);
 		Arrays.stream(files).forEach(file -> {
 			try {

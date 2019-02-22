@@ -79,7 +79,7 @@ public final class Beatmap {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public GeneralSection getGeneralSection() {
 		return (GeneralSection) sections.get(0);
 	}

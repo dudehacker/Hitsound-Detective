@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import detective.Main;
 import detective.mistake.MistakeType;
 import detective.mistake.TimedMistake;
 import osu.beatmap.Beatmap;
@@ -105,7 +104,6 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 				}
 			}
 
-			Map<Long, Chord> sourceChords = BeatmapUtils.convertToChordMapWithHitsound(sourceHO, sourceSB);
 			Map<Long, Chord> targetChords = BeatmapUtils.convertToChordMapWithHitsound(targetHO, targetSB);
 			for (Map.Entry<Long, Chord> entry : targetChords.entrySet()) {
 				Chord chord = entry.getValue();
@@ -118,6 +116,7 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 				}
 
 				if (!sourceDifficulty.equals(targetDifficulty)) {
+					Map<Long, Chord> sourceChords = BeatmapUtils.convertToChordMapWithHitsound(sourceHO, sourceSB);
 					int i = -1;
 					Chord sourceChord = null;
 					while (i < 2 && sourceChord == null) {
@@ -133,7 +132,6 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 
 			System.out.println(getName() + " has mistake count = " + mistakes.size());
 			Collections.sort(mistakes);
-			Main.threadFinished();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

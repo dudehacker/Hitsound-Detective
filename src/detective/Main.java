@@ -1,4 +1,5 @@
 package detective;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,17 +19,13 @@ import detective.hitsound.HitsoundDetectiveThread;
 import detective.image.ImageDetective;
 import detective.mistake.Mistake;
 import osu.beatmap.Beatmap;
-import osu.beatmap.general.Mode;
 import util.BeatmapUtils;
 
 public class Main {
-	private final static String propertyName = "Hitsound Detective config.properties";
+	private static final String propertyName = "Hitsound Detective config.properties";
 	private static String OsuPath = "C:\\Program Files (x86)\\osu!\\Songs";
 	private static String programStartPath = System.getProperty("user.dir");
-	private static List<HitsoundDetectiveThread> threads = new ArrayList<HitsoundDetectiveThread>();
-	private static int finishedThreadCount = 0;
-	private static int maxThreadSize;
-	private static File sourceFile;
+	private static List<HitsoundDetectiveThread> list = new ArrayList<>();
 	private static Set<String> imageMistakes = new HashSet<>();
 
 	public static void main(String[] args) {
@@ -37,47 +34,29 @@ public class Main {
 		if (!osuDefaultPath.exists()) {
 			OsuPath = programStartPath;
 		}
-		sourceFile = BeatmapUtils.getOsuFile(OsuPath);
+		File sourceFile = BeatmapUtils.getOsuFile(OsuPath);
 		OsuPath = sourceFile.getParentFile().getAbsolutePath();
 
 		writeToProperty(programStartPath);
 
-		FilenameFilter textFilter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				String lowercaseName = name.toLowerCase();
-				if (lowercaseName.endsWith(".osu")) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		};
-		File[] fileTargets = new File(OsuPath).listFiles(textFilter);
+		File[] fileTargets = HitsoundDetective.getOsuFiles(new File(OsuPath));
 		Set<String> images = new HashSet<>();
 		for (File f : fileTargets) {
 			Beatmap b;
 			try {
 				b = new Beatmap(f);
-				if (b.getGeneralSection().getMode().equals(Mode.MANIA)) {
-					images.add(b.getEventSection().getBgImage());
-					HitsoundDetectiveThread hd = new HitsoundDetectiveThread(sourceFile, f);
-					threads.add(hd);
-					hd.run();
-				}
-			} catch (ParseException e) {
-//				e.printStackTrace();
-			} catch (IOException e) {
-//				e.printStackTrace();
-			} catch (NumberFormatException e) {
-//				e.printStackTrace();
+				images.add(b.getEventSection().getBgImage());
+				HitsoundDetectiveThread hd = new HitsoundDetectiveThread(sourceFile, f);
+				list.add(hd);
+				hd.run();
+			} catch (ParseException | IOException e) {
+				e.printStackTrace();
 			}
-			
 		}
 		System.out.println("after reading all beatmaps");
-		maxThreadSize = threads.size();
-
+		processResult();
 		for (String image : images) {
-			File f = new File(sourceFile.getParent()+"\\"+image);
+			File f = new File(sourceFile.getParent() + "\\" + image);
 			Mistake m = ImageDetective.check(f);
 			if (m != null) {
 				imageMistakes.add(m.getDescription());
@@ -86,62 +65,59 @@ public class Main {
 
 	}
 
-	public static synchronized void threadFinished() throws Exception {
-		finishedThreadCount++;
-		if (maxThreadSize == finishedThreadCount) {
-			ResultsWindow frame = new ResultsWindow();
-			frame.setVisible(true);
+	public static void processResult() {
+		ResultsWindow frame = new ResultsWindow();
+		frame.setVisible(true);
 
-			Set<String> usedHitsound = new HashSet<>();
-			// get every used hitsound
-			Collections.sort(threads);
-			for (HitsoundDetectiveThread hd : threads) {
-				frame.addTabForSpecificDifficulty(hd.getName(), hd.getMistakes());
-				for (String s : hd.getUsedHS()) {
-					usedHitsound.add(s);
-				}
+		Set<String> usedHitsound = new HashSet<>();
+		// get every used hitsound
+		Collections.sort(list);
+		for (HitsoundDetectiveThread hd : list) {
+			frame.addTabForSpecificDifficulty(hd.getName(), hd.getMistakes());
+			for (String s : hd.getUsedHS()) {
+				usedHitsound.add(s);
 			}
-
-			// get actual Hitsound
-			FilenameFilter hsFilter = new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					String lowercaseName = name.toLowerCase();
-					if (lowercaseName.endsWith(".wav") || lowercaseName.endsWith(".ogg")) {
-						return true;
-					} else {
-						return false;
-					}
-				}
-			};
-			Set<String> physicalHS = new HashSet<>();
-			File[] wavFiles = new File(OsuPath).listFiles(hsFilter);
-			
-			// Find wrong format hitsound
-			Set<String> wrongFormatHitSounds = new HashSet<>();
-
-			for (File wav : wavFiles) {
-				physicalHS.add(wav.getName());
-				if (!wav.getName().endsWith(".wav")) {
-					wrongFormatHitSounds.add(wav.getName());
-				}
-			}
-			
-			frame.addTabForAllDifficulties("Wrong format hitsound",wrongFormatHitSounds);
-			
-			// Find un-used hitsound
-			Set<String> unusedHitsounds = new HashSet<>(physicalHS);
-			unusedHitsounds.removeAll(usedHitsound);
-			frame.addTabForAllDifficulties("Unused hitsound",unusedHitsounds);
-			
-			// Find missing hitsound
-			Set<String> missingHitsounds = new HashSet<>(usedHitsound);
-			System.out.println("used\n" + usedHitsound.toString());
-			System.out.println("exist\n"+physicalHS.toString());
-			missingHitsounds.removeAll(physicalHS);
-			frame.addTabForAllDifficulties("Missing hitsound",missingHitsounds);
-
-//			frame.addTabForAllDifficulties("Bad Images", imageMistakes);
 		}
+
+		// get actual Hitsound
+		FilenameFilter hsFilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				String lowercaseName = name.toLowerCase();
+				if (lowercaseName.endsWith(".wav") || lowercaseName.endsWith(".ogg")) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		};
+		Set<String> physicalHS = new HashSet<>();
+		File[] wavFiles = new File(OsuPath).listFiles(hsFilter);
+
+		// Find wrong format hitsound
+		Set<String> wrongFormatHitSounds = new HashSet<>();
+
+		for (File wav : wavFiles) {
+			physicalHS.add(wav.getName());
+			if (!wav.getName().endsWith(".wav")) {
+				wrongFormatHitSounds.add(wav.getName());
+			}
+		}
+
+		frame.addTabForAllDifficulties("Wrong format hitsound", wrongFormatHitSounds);
+
+		// Find un-used hitsound
+		Set<String> unusedHitsounds = new HashSet<>(physicalHS);
+		unusedHitsounds.removeAll(usedHitsound);
+		frame.addTabForAllDifficulties("Unused hitsound", unusedHitsounds);
+
+		// Find missing hitsound
+		Set<String> missingHitsounds = new HashSet<>(usedHitsound);
+		System.out.println("used\n" + usedHitsound.toString());
+		System.out.println("exist\n" + physicalHS.toString());
+		missingHitsounds.removeAll(physicalHS);
+		frame.addTabForAllDifficulties("Missing hitsound", missingHitsounds);
+
+		// frame.addTabForAllDifficulties("Bad Images", imageMistakes);
 	}
 
 	private static void readFromProperty(String path) {

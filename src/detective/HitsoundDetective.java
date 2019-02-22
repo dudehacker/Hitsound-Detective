@@ -22,11 +22,14 @@ public class HitsoundDetective {
 	private File folder;
 	private File sourceFile;
 	private File[] osuFiles;
-	ModResponse res;
+	private ModResponse res;
+	private Set<String> missingHitsounds;
+	private Set<String> unusedHitsounds;
+	private Set<String> wrongFormatHitSounds;
 
 	public HitsoundDetective(File folder) {
 		this.folder = folder;
-		osuFiles = getOsuFiles();
+		osuFiles = getOsuFiles(folder);
 		Beatmap beatmap;
 		try {
 			beatmap = new Beatmap(getHitsoundDiff());
@@ -42,7 +45,11 @@ public class HitsoundDetective {
 		for (File file : osuFiles) {
 			HitsoundDetectiveThread t = new HitsoundDetectiveThread(sourceFile, file);
 			Mod mod = new Mod(t.getName());
-			mod.setNoteCount(t.getNoteCount());
+			if (sourceFile.equals(file)){
+				mod.setNoteCount(1);
+			} else {
+				mod.setNoteCount(t.getNoteCount());
+			}
 			t.run();
 			mod.addMistake(t.getMistakes());
 			res.addTab(mod);
@@ -52,8 +59,8 @@ public class HitsoundDetective {
 		}
 
 		Mod all = new Mod("All");
-		all.setNoteCount(-1);
-		Set<String> wrongFormatHitSounds = new HashSet<>();
+		all.setNoteCount(-2);
+		wrongFormatHitSounds = new HashSet<>();
 		File[] hitsounds = folder
 				.listFiles((dir, name) -> name.toLowerCase().endsWith(".wav") || name.toLowerCase().endsWith(".ogg"));
 		Set<String> physicalHS = new HashSet<>();
@@ -65,11 +72,11 @@ public class HitsoundDetective {
 		});
 		wrongFormatHitSounds.forEach(hs -> all.addMistake(new Mistake(MistakeType.WrongFormatHitsound, hs)));
 
-		Set<String> unusedHitsounds = new HashSet<>(physicalHS);
+		unusedHitsounds = new HashSet<>(physicalHS);
 		unusedHitsounds.removeAll(usedHitsound);
 		unusedHitsounds.forEach(hs -> all.addMistake(new Mistake(MistakeType.UnusedHitsound, hs)));
 
-		Set<String> missingHitsounds = new HashSet<>(usedHitsound);
+		missingHitsounds = new HashSet<>(usedHitsound);
 		missingHitsounds.removeAll(physicalHS);
 		missingHitsounds.forEach(hs -> all.addMistake(new Mistake(MistakeType.MissingHitsound, hs)));
 
@@ -90,7 +97,7 @@ public class HitsoundDetective {
 		}
 	}
 
-	public File[] getOsuFiles() {
+	public static File[] getOsuFiles(File folder) {
 		return folder.listFiles((dir, name) -> {
 			File f = new File(dir,name);
 			boolean isMania = false;
@@ -107,7 +114,7 @@ public class HitsoundDetective {
 	}
 
 	public File getHitsoundDiff() {
-		Optional<File> optional = Arrays.stream(getOsuFiles()).max((f1, f2) -> {
+		Optional<File> optional = Arrays.stream(getOsuFiles(folder)).max((f1, f2) -> {
 			Beatmap b1;
 			Beatmap b2;
 			try {
@@ -133,6 +140,18 @@ public class HitsoundDetective {
 			System.out.println("Hitsound diff is " + sourceFile);
 		}
 		return sourceFile;
+	}
+
+	public Set<String> getMissingHitsounds() {
+		return missingHitsounds;
+	}
+
+	public Set<String> getUnusedHitsounds() {
+		return unusedHitsounds;
+	}
+
+	public Set<String> getWrongFormatHitSounds() {
+		return wrongFormatHitSounds;
 	}
 
 }
