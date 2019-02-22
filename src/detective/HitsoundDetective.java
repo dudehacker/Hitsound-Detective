@@ -86,6 +86,10 @@ public class HitsoundDetective {
 	
 	public static File getFolder(String setID){
 		File downloadFolder =  new File(BeatmapDownloader.downloadPath);
+		System.out.println(downloadFolder);
+		if (!downloadFolder.exists()){
+			downloadFolder.mkdirs();
+		}
 		File[] files = downloadFolder.listFiles((dir,name)-> {
 			File f = new File(dir,name);
 			return f.isDirectory() && f.getName().startsWith(setID);
