@@ -66,11 +66,11 @@ public class HitsoundDetective {
 		Set<String> physicalHS = new HashSet<>();
 		Arrays.stream(hitsounds).forEach(hs -> {
 			physicalHS.add(hs.getName());
-			if (!hs.getName().endsWith(".wav")) {
-				wrongFormatHitSounds.add(hs.getName());
-			}
+//			if (!hs.getName().endsWith(".wav")) {
+//				wrongFormatHitSounds.add(hs.getName());
+//			}
 		});
-		wrongFormatHitSounds.forEach(hs -> all.addMistake(new Mistake(MistakeType.WrongFormatHitsound, hs)));
+//		wrongFormatHitSounds.forEach(hs -> all.addMistake(new Mistake(MistakeType.WrongFormatHitsound, hs)));
 
 		unusedHitsounds = new HashSet<>(physicalHS);
 		unusedHitsounds.removeAll(usedHitsound);
