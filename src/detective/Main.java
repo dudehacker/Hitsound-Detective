@@ -3,6 +3,7 @@ package detective;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,9 +12,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 
 import detective.hitsound.HitsoundDetectiveThread;
 import detective.image.ImageDetective;
@@ -25,6 +28,7 @@ public class Main {
 	private static final String propertyName = "Hitsound Detective config.properties";
 	private static String OsuPath = "C:\\Program Files (x86)\\osu!\\Songs";
 	private static String programStartPath = System.getProperty("user.dir");
+	private static boolean textOutput = true;
 	private static List<HitsoundDetectiveThread> list = new ArrayList<>();
 	private static Set<String> imageMistakes = new HashSet<>();
 
@@ -106,9 +110,17 @@ public class Main {
 //		frame.addTabForAllDifficulties("Wrong format hitsound", wrongFormatHitSounds);
 
 		// Find un-used hitsound
-		Set<String> unusedHitsounds = new HashSet<>(physicalHS);
+		TreeSet<String> unusedHitsounds = new TreeSet<>(physicalHS);
 		unusedHitsounds.removeAll(usedHitsound);
 		frame.addTabForAllDifficulties("Unused hitsound", unusedHitsounds);
+		if (textOutput) {
+			System.out.println("printing unused hs");
+			try {
+				writeListToFile(unusedHitsounds,"Unused.txt");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		// Find missing hitsound
 		Set<String> missingHitsounds = new HashSet<>(usedHitsound);
@@ -131,7 +143,10 @@ public class Main {
 				input = new FileInputStream(propertyPath);
 				prop.load(input);
 				if (prop.getProperty("Path") != null) {
-					OsuPath = prop.getProperty("Path");
+					OsuPath = prop.getProperty("Path");	
+				}
+				if (prop.getProperty("TextOutput") != null) {
+					textOutput = new Boolean(prop.getProperty("TextOutput"));
 				}
 
 				input.close();
@@ -156,6 +171,7 @@ public class Main {
 			prop.load(input);
 			// System.out.println(OsuPath);
 			prop.setProperty("Path", OsuPath);
+			prop.setProperty("TextOutput", ""+textOutput);
 			input.close();
 			// save properties to project root folder
 			output = new FileOutputStream(propertyPath);
@@ -164,5 +180,17 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static void writeListToFile(Set<String> set, String filename) throws IOException {
+		FileWriter fw = new FileWriter(programStartPath+"\\"+filename);
+		System.out.println(programStartPath+"\\"+filename);
+		Iterator<String> ite = set.iterator();
+		while (ite.hasNext()) {
+			String s = ite.next();
+			fw.write(s);
+			fw.write("\n");
+		}
+		fw.close();
 	}
 }
