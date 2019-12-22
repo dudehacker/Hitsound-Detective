@@ -8,9 +8,13 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
@@ -30,18 +34,20 @@ public class ResultsWindow extends JFrame {
 
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
-	private static final String VERSION = "v20190216";
+	private static final String VERSION = "v20191222";
 	private static final String A_HREF = "<a href=\"";
 	private static final String HREF_CLOSED = "\">";
 	private static final String HREF_END = "</a>";
 	private static final String HTML = "<html>";
 	private static final String HTML_END = "</html>";
-
+	private String songPath;
 
 	/**
 	 * Create the frame.
+	 * @param osuPath 
 	 */
-	public ResultsWindow() {
+	public ResultsWindow(String path) {
+		songPath = path;
 		setTitle("Hitsound Detective by DH - " + VERSION);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 463, 333);
@@ -94,8 +100,28 @@ public class ResultsWindow extends JFrame {
 			JScrollPane scrollPane = new JScrollPane(panel);
 			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			tabbedPane.addTab(tabName, scrollPane);
+			if (tabName.equals("Unused hitsound")) {
+				deleteUnused(HS);
+			}
 		} else {
 			JOptionPane.showMessageDialog(null, "No " + tabName, "Good News", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	private void deleteUnused(Collection<String> HS) {
+		int input = JOptionPane.showConfirmDialog(null,"Do you want to DELETE all un-used hitsound samples?");
+		if (input==JOptionPane.YES_OPTION) {
+			Iterator<String> ite = HS.iterator();
+			while (ite.hasNext()) {
+				String s = ite.next();
+				File f = new File(songPath+"\\"+s);
+//				System.out.println(f);
+				try {
+					Files.deleteIfExists(f.toPath());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

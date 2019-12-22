@@ -70,7 +70,7 @@ public class Main {
 	}
 
 	public static void processResult() {
-		ResultsWindow frame = new ResultsWindow();
+		ResultsWindow frame = new ResultsWindow(OsuPath);
 		frame.setVisible(true);
 
 		Set<String> usedHitsound = new HashSet<>();
@@ -128,7 +128,7 @@ public class Main {
 		System.out.println("exist\n" + physicalHS.toString());
 		missingHitsounds.removeAll(physicalHS);
 		frame.addTabForAllDifficulties("Missing hitsound", missingHitsounds);
-
+		
 		// frame.addTabForAllDifficulties("Bad Images", imageMistakes);
 	}
 
