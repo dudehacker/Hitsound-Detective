@@ -94,16 +94,16 @@ public class Main {
 		File[] wavFiles = new File(OsuPath).listFiles(hsFilter);
 
 		// Find wrong format hitsound
-		Set<String> wrongFormatHitSounds = new HashSet<>();
+//		Set<String> wrongFormatHitSounds = new HashSet<>();
 
 		for (File wav : wavFiles) {
 			physicalHS.add(wav.getName());
-			if (!wav.getName().endsWith(".wav")) {
-				wrongFormatHitSounds.add(wav.getName());
-			}
+//			if (!wav.getName().endsWith(".wav")) {
+//				wrongFormatHitSounds.add(wav.getName());
+//			}
 		}
 
-		frame.addTabForAllDifficulties("Wrong format hitsound", wrongFormatHitSounds);
+//		frame.addTabForAllDifficulties("Wrong format hitsound", wrongFormatHitSounds);
 
 		// Find un-used hitsound
 		Set<String> unusedHitsounds = new HashSet<>(physicalHS);
