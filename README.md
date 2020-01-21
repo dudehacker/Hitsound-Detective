@@ -7,6 +7,9 @@ Check hitsound issues in osu!mania maps
 1. Pick 1 difficulty as your hitsound difficulty. Pick the highest difficulty if you don't have a custom hitsound difficulty
 2. The result will be displayed as hyperlink, clicking it will direct you to the note in osu editor. 
 
+Those who have issue open jar. see this:
+https://www.youtube.com/watch?v=z3OylWor4RQ
+
 ## Download
 https://github.com/dudehacker/Hitsound-Detective/releases/latest
 
