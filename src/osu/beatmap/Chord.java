@@ -84,8 +84,12 @@ public class Chord {
 	}
 
 	public boolean containsHitsounds(Chord chord) {
-		if (chord == null)
+		if (chord == null || chord.getHitsounds().size() == 0) {
+			if (getHitsounds().size()>0) {
+				return false;
+			}
 			return true;
+		}
 		return this.getHitsounds().containsAll(chord.getHitsounds());
 	}
 

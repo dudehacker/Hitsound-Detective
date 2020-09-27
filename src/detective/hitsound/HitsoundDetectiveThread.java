@@ -105,6 +105,8 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 			}
 
 			Map<Long, Chord> targetChords = BeatmapUtils.convertToChordMapWithHitsound(targetHO, targetSB);
+			Map<Long, Chord> sourceChords = BeatmapUtils.convertToChordMapWithHitsound(sourceHO, sourceSB);
+			
 			for (Map.Entry<Long, Chord> entry : targetChords.entrySet()) {
 				Chord chord = entry.getValue();
 				if (chord.SbHasSoundWhenHoIsEmpty()) {
@@ -115,15 +117,17 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 					mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.DuplicateHitsound));
 				}
 
-				if (!sourceDifficulty.equals(targetDifficulty)) {
-					Map<Long, Chord> sourceChords = BeatmapUtils.convertToChordMapWithHitsound(sourceHO, sourceSB);
+				String sourceDiffName = (String) sourceDifficulty.getMetadataSection().getProperty(MetadataSection.versionKey);
+				String targetDiffName = (String) targetDifficulty.getMetadataSection().getProperty(MetadataSection.versionKey);
+				if (!sourceDiffName.equals(targetDiffName)) {
+					
 					int i = -1;
 					Chord sourceChord = null;
 					while (i < 2 && sourceChord == null) {
 						sourceChord = sourceChords.get(chord.getStartTime()+i);
 						i++;
 					}
-					
+								
 					if (!chord.containsHitsounds(sourceChord)) {
 						mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.Inconsistency));
 					}
