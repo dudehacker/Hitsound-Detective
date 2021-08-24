@@ -107,7 +107,13 @@ public class BeatmapDownloader {
 		wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("page-mode__item")));
 	}
 
-	public static ModResponse modMap(String url) {
+	public static ModResponse modLocal(String file) {
+		File folder = new File(file);
+		HitsoundDetective hd = new HitsoundDetective(folder);
+		return hd.mod();
+	}
+	
+	public static ModResponse modUrl(String url) {
 		if (!checkUrl(url)) {
 			throw new InvalidUrlException(url);
 		}
