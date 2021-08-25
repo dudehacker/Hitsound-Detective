@@ -14,7 +14,7 @@ import server.model.ModResponse;
 import server.service.FilesStorageService;
 
 @RestController
-@CrossOrigin("http://localhost:3000") // react front end
+@CrossOrigin(origins = {"http://localhost:3000", "https://hitsound-detective-frontend.herokuapp.com"}) // react front end
 public class Controller {
 
 	@Autowired
@@ -25,7 +25,6 @@ public class Controller {
 		return BeatmapDownloader.modUrl(url);
 	}
 
-	@CrossOrigin()
 	@PostMapping("/upload")
 	public ModResponse modLocal(@RequestParam("files") MultipartFile[] files, @RequestParam("folder") String folder) {
 		// String message = "";
