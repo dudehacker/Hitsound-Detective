@@ -6,4 +6,5 @@
 bin
 Hitsound Detective config.properties
 /target/
+/uploads
 /Unused.txt
