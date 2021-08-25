@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.springframework.stereotype.Service;
-
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -27,7 +27,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 			throw new RuntimeException("Could not initialize folder for upload!");
 		}
 	}
-
+	
 	@Override
 	public void save(MultipartFile file, String folder) {
 		try {
@@ -49,7 +49,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 	
 	@Override
 	public void deleteFolder(String folder) {
-		// TODO Auto-generated method stub
+		FileSystemUtils.deleteRecursively(getFolder(folder));
 		
 	}
 

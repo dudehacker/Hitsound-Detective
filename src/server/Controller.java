@@ -31,7 +31,7 @@ public class Controller {
 		// String message = "";
 		System.out.println(folder);
 		try {
-
+			storageService.deleteFolder(folder);
 			Arrays.asList(files).stream().forEach(file -> {
 				storageService.save(file,folder);
 			});
