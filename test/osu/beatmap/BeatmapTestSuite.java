@@ -8,6 +8,7 @@ import osu.beatmap.editor.TestEditorSection;
 import osu.beatmap.event.TestEventSection;
 import osu.beatmap.general.TestGeneralSection;
 import osu.beatmap.general.TestMode;
+import osu.beatmap.hitobject.TestGlobalSFX;
 import osu.beatmap.hitobject.TestHitObject;
 import osu.beatmap.hitobject.TestHitObjectSection;
 import osu.beatmap.hitobject.TestHitsoundType;
@@ -18,7 +19,7 @@ import osu.beatmap.timing.TestTimingSection;
 
 @Suite.SuiteClasses({
    TestBeatmap.class,
-   
+   TestGlobalSFX.class,
    TestDifficultySection.class,
    TestEditorSection.class,
    TestEventSection.class,

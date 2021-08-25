@@ -15,6 +15,7 @@ import detective.mistake.TimedMistake;
 import osu.beatmap.Beatmap;
 import osu.beatmap.Chord;
 import osu.beatmap.event.Sample;
+import osu.beatmap.general.GeneralSection;
 import osu.beatmap.hitobject.HitObject;
 import osu.beatmap.metadata.MetadataSection;
 import osu.beatmap.timing.Timing;
@@ -79,7 +80,8 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 			
 			List<HitObject> sourceHO = sourceDifficulty.getHitObjectSection().getHitObjects();
 			List<HitObject> targetHO = targetDifficulty.getHitObjectSection().getHitObjects();
-
+			String audioFile = targetDifficulty.getGeneralSection().getProperty(GeneralSection.audioFileName).toString();
+			usedHitsounds.add(audioFile);
 
 			List<Sample> sourceSB = sourceDifficulty.getEventSection().getSamples();
 			List<Sample> targetSB = targetDifficulty.getEventSection().getSamples();

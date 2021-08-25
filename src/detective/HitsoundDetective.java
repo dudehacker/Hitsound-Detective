@@ -13,6 +13,7 @@ import detective.mistake.Mistake;
 import detective.mistake.MistakeType;
 import osu.beatmap.Beatmap;
 import osu.beatmap.general.Mode;
+import osu.beatmap.hitobject.GlobalSFX;
 import server.BeatmapDownloader;
 import server.model.Mod;
 import server.model.ModResponse;
@@ -39,6 +40,8 @@ public class HitsoundDetective {
 		}
 
 	}
+	
+
 
 	public ModResponse mod() {
 		Set<String> usedHitsound = new HashSet<>();
@@ -62,7 +65,10 @@ public class HitsoundDetective {
 		all.setNoteCount(-2);
 		wrongFormatHitSounds = new HashSet<>();
 		File[] hitsounds = folder
-				.listFiles((dir, name) -> name.toLowerCase().endsWith(".wav") || name.toLowerCase().endsWith(".ogg"));
+				.listFiles((dir, name) -> 
+					name.toLowerCase().endsWith(".wav") 
+					|| name.toLowerCase().endsWith(".ogg") 
+					|| name.toLowerCase().endsWith(".mp3"));
 		Set<String> physicalHS = new HashSet<>();
 		Arrays.stream(hitsounds).forEach(hs -> {
 			physicalHS.add(hs.getName());
@@ -74,7 +80,11 @@ public class HitsoundDetective {
 
 		unusedHitsounds = new HashSet<>(physicalHS);
 		unusedHitsounds.removeAll(usedHitsound);
-		unusedHitsounds.forEach(hs -> all.addMistake(new Mistake(MistakeType.UnusedHitsound, hs)));
+		unusedHitsounds.forEach(hs -> {
+			if (!GlobalSFX.isGlobalSFX(hs)) {
+				all.addMistake(new Mistake(MistakeType.UnusedHitsound, hs));
+			}
+			});
 
 		missingHitsounds = new HashSet<>(usedHitsound);
 		missingHitsounds.removeAll(physicalHS);
