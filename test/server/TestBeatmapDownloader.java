@@ -17,10 +17,10 @@ public class TestBeatmapDownloader {
 	@Test
 	public void testMod(){
 		String url = "https://osu.ppy.sh/beatmapsets/"+beatmapSet;
-		ModResponse mod1 = BeatmapDownloader.modMap(url);
+		ModResponse mod1 = BeatmapDownloader.modUrl(url);
 		
 		String urlOld = "https://osu.ppy.sh/b/"+beatmapID;
-		ModResponse mod2 =BeatmapDownloader.modMap(urlOld);
+		ModResponse mod2 =BeatmapDownloader.modUrl(urlOld);
 		
 		assertEquals(mod1,mod2);
 	}
