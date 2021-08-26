@@ -48,11 +48,7 @@ public class HitsoundDetective {
 		for (File file : osuFiles) {
 			HitsoundDetectiveThread t = new HitsoundDetectiveThread(sourceFile, file);
 			Mod mod = new Mod(t.getName());
-			if (sourceFile.equals(file)){
-				mod.setNoteCount(1);
-			} else {
-				mod.setNoteCount(t.getNoteCount());
-			}
+			mod.setNoteCount(t.getNoteCount());
 			t.run();
 			mod.addMistake(t.getMistakes());
 			res.addTab(mod);
@@ -137,13 +133,10 @@ public class HitsoundDetective {
 				b2 = new Beatmap(f2);
 				int count1 = b1.getHitObjectSection().getHsCount();
 				int count2 = b2.getHitObjectSection().getHsCount();
-				if (count1 == count2) {
-					double ratio1 = count1 * 1000.0 / b1.getHitObjectSection().getHitObjects().size();
-					double ratio2 = count2 * 1000.0 / b2.getHitObjectSection().getHitObjects().size();
-					return (int) (ratio1 - ratio2);
-				} else {
-					return count1 - count2;
-				}
+				double ratio1 = count1 * 1.0 / b1.getHitObjectSection().getHitObjects().size();
+				double ratio2 = count2 * 1.0 / b2.getHitObjectSection().getHitObjects().size();
+				return ratio1 > ratio2  ? 1 : -1;
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

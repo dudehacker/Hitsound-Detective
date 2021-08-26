@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import server.model.ModResponse;
 import server.service.FilesStorageService;
+import server.service.ModService;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "https://hitsound-detective-frontend.herokuapp.com"}) // react front end
@@ -19,6 +20,9 @@ public class Controller {
 
 	@Autowired
 	FilesStorageService storageService;
+	
+	@Autowired
+	ModService modService;
 
 	@RequestMapping("/download")
 	public ModResponse mod(@RequestParam(value = "url") String url) {
@@ -30,7 +34,6 @@ public class Controller {
 		// String message = "";
 		System.out.println(folder);
 		try {
-			storageService.deleteFolder(folder);
 			Arrays.asList(files).stream().forEach(file -> {
 				storageService.save(file,folder);
 			});
@@ -38,8 +41,9 @@ public class Controller {
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-		
-		return BeatmapDownloader.modLocal(storageService.getFolder(folder));
+		ModResponse results =  modService.mod(folder);
+		storageService.deleteFolder(folder);
+		return results;
 	}
 
 }

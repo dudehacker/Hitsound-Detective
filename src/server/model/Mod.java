@@ -28,6 +28,10 @@ public class Mod implements Comparable<Mod>{
 	public void setNoteCount(int count){
 		noteCount = count;
 	}
+	
+	public int getNoteCount(){
+		return noteCount;
+	}
 
 	@JsonProperty("name")
 	public String getDifficulty() {
@@ -50,7 +54,6 @@ public class Mod implements Comparable<Mod>{
 	public int compareTo(Mod other) {
 		return this.noteCount - other.noteCount;
 	}
-	
 	
 	
 }

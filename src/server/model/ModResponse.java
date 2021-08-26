@@ -1,8 +1,7 @@
 package server.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import detective.mistake.Mistake;
 import detective.mistake.MistakeType;
@@ -17,9 +16,8 @@ public class ModResponse {
 	private String mapper;
 	private int beatmapSetId;
 	private String url;
-	private List<Mod> tabs = new ArrayList<>();
-	
-
+	private SortedSet<Mod> tabs = new TreeSet<>();;
+	private String hitsoundDiff;
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -38,7 +36,6 @@ public class ModResponse {
 
 	public ModResponse(String url){
 		this.url = url;
-		tabs = new ArrayList<>();
 	}
 	
 	public ModResponse(Beatmap beatmap) {
@@ -48,6 +45,7 @@ public class ModResponse {
 		setMapper(metadata.getProperty(MetadataSection.creatorKey).toString());
 		setBeatmapSetId((int) metadata.getProperty(MetadataSection.beatmapSetIdKey));
 		setUrl("https://osu.ppy.sh/beatmapsets/"+beatmapSetId+"/#mania");
+		setHitsoundDiff(metadata.getProperty(MetadataSection.versionKey).toString());
 	}
 	
 	static ModResponse dummyModResponse(String url){
@@ -79,10 +77,9 @@ public class ModResponse {
 
 	public void addTab(Mod mod){
 		tabs.add(mod);
-		Collections.sort(tabs);
 	}
 	
-	public List<Mod> getTabs() {
+	public SortedSet<Mod> getTabs() {
 		return tabs;
 	}
 
@@ -124,6 +121,14 @@ public class ModResponse {
 
 	public String getUrl(){
 		return url;
+	}
+
+	public String getHitsoundDiff() {
+		return hitsoundDiff;
+	}
+
+	public void setHitsoundDiff(String hitsoundDiff) {
+		this.hitsoundDiff = hitsoundDiff;
 	}
 	
 }
