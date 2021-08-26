@@ -1,6 +1,8 @@
 # Hitsound-Detective
 Check hitsound issues in osu!mania maps
 
+Web version: https://hitsound-detective-frontend.herokuapp.com/
+
 
 ## Instructions
 
