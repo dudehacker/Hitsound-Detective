@@ -1,7 +1,7 @@
 # Hitsound-Detective
 Check hitsound issues in osu!mania maps
 
-Web version: https://hitsound-detective-frontend.herokuapp.com/
+~~Web version: https://hitsound-detective-frontend.herokuapp.com/~~ this is dead cuz of heroku no more free plan
 
 
 ## Instructions
