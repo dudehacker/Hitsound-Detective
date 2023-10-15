@@ -11,6 +11,8 @@ import java.util.Set;
 import detective.hitsound.HitsoundDetectiveThread;
 import detective.mistake.Mistake;
 import detective.mistake.MistakeType;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import osu.beatmap.Beatmap;
 import osu.beatmap.general.Mode;
 import osu.beatmap.hitobject.GlobalSFX;
@@ -18,14 +20,18 @@ import server.BeatmapDownloader;
 import server.model.Mod;
 import server.model.ModResponse;
 
+@Slf4j
 public class HitsoundDetective {
 
-	private File folder;
+	private final File folder;
 	private File sourceFile;
-	private File[] osuFiles;
+	private final File[] osuFiles;
 	private ModResponse res;
+	@Getter
 	private Set<String> missingHitsounds;
+	@Getter
 	private Set<String> unusedHitsounds;
+	@Getter
 	private Set<String> wrongFormatHitSounds;
 
 	public HitsoundDetective(File folder) {
@@ -36,7 +42,7 @@ public class HitsoundDetective {
 			beatmap = new Beatmap(getHitsoundDiff());
 			res = new ModResponse(beatmap);
 		} catch (ParseException | IOException e) {
-			e.printStackTrace();
+			log.error("failed to open HS diff!", e);
 		}
 
 	}
@@ -52,9 +58,7 @@ public class HitsoundDetective {
 			t.run();
 			mod.addMistake(t.getMistakes());
 			res.addTab(mod);
-			for (String s : t.getUsedHS()) {
-				usedHitsound.add(s);
-			}
+			usedHitsound.addAll(t.getUsedHS());
 		}
 
 		Mod all = new Mod("All");
@@ -117,7 +121,7 @@ public class HitsoundDetective {
 					Beatmap beatmap = new Beatmap(f);
 					isMania = beatmap.getGeneralSection().getMode().equals(Mode.MANIA);
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error("failed to open osu files", e);
 				}
 			}
 			return (isMania);
@@ -138,28 +142,16 @@ public class HitsoundDetective {
 				return ratio1 > ratio2  ? 1 : -1;
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("failed to read HS diff", e);
 			}
 			return 0;
 
 		});
 		if (optional.isPresent()) {
 			sourceFile = optional.get();
-			System.out.println("Hitsound diff is " + sourceFile);
+			log.info("Hitsound diff is {}", sourceFile );
 		}
 		return sourceFile;
-	}
-
-	public Set<String> getMissingHitsounds() {
-		return missingHitsounds;
-	}
-
-	public Set<String> getUnusedHitsounds() {
-		return unusedHitsounds;
-	}
-
-	public Set<String> getWrongFormatHitSounds() {
-		return wrongFormatHitSounds;
 	}
 
 }
