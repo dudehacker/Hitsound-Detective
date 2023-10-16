@@ -20,7 +20,7 @@ import java.util.*;
 @Data
 public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThread> {
 
-    private Beatmap sourceDifficulty;
+    private Beatmap hitsoundDifficulty;
     private Beatmap targetDifficulty;
 
     private List<TimedMistake> mistakes = new ArrayList<>();
@@ -28,7 +28,7 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 
     public HitsoundDetectiveThread(File source, File target) {
         try {
-            sourceDifficulty = new Beatmap(source);
+            hitsoundDifficulty = new Beatmap(source);
             targetDifficulty = new Beatmap(target);
         } catch (Exception e) {
             log.error("failed to start a thread", e);
@@ -37,7 +37,7 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 
     @Override
     public int hashCode() {
-        return sourceDifficulty.hashCode() + targetDifficulty.hashCode();
+        return hitsoundDifficulty.hashCode() + targetDifficulty.hashCode();
     }
 
     @Override
@@ -73,12 +73,12 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 
             checkUnusedTimings();
 
-            List<HitObject> sourceHO = sourceDifficulty.getHitObjectSection().getHitObjects();
+            List<HitObject> sourceHO = hitsoundDifficulty.getHitObjectSection().getHitObjects();
             List<HitObject> targetHO = targetDifficulty.getHitObjectSection().getHitObjects();
             String audioFile = targetDifficulty.getGeneralSection().getProperty(GeneralSection.audioFileName).toString();
             usedHitsounds.add(audioFile);
 
-            List<Sample> sourceSB = sourceDifficulty.getEventSection().getSamples();
+            List<Sample> sourceSB = hitsoundDifficulty.getEventSection().getSamples();
             List<Sample> targetSB = targetDifficulty.getEventSection().getSamples();
 
             // check for used hitsounds
@@ -106,7 +106,7 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
 
             for (Map.Entry<Long, Chord> entry : targetChords.entrySet()) {
                 Chord chord = entry.getValue();
-                if (chord.SbHasSoundWhenHoIsEmpty()) {
+                if (chord.SbHasSoundWhenHoIsEmpty() || chord.shouldMoveSbToHo()) {
                     mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.SBwhenNoNote));
                 }
 
@@ -114,7 +114,7 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
                     mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.DuplicateHitsound));
                 }
 
-                String sourceDiffName = (String) sourceDifficulty.getMetadataSection().getProperty(MetadataSection.versionKey);
+                String sourceDiffName = (String) hitsoundDifficulty.getMetadataSection().getProperty(MetadataSection.versionKey);
                 String targetDiffName = (String) targetDifficulty.getMetadataSection().getProperty(MetadataSection.versionKey);
                 if (!sourceDiffName.equals(targetDiffName)) {
 
