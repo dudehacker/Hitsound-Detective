@@ -120,4 +120,29 @@ public class TestChord {
         // then
         assertFalse(result);
     }
+
+    @Test
+    public void shouldNotFlagMoveToSB2() {
+        // given
+        Chord chord1 = new Chord();
+        chord1.add(new Sample(0, "kick.wav", 100));
+
+        // when
+        boolean result = chord1.shouldMoveSbToHo();
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    public void shouldNotFlagMoveToSB3() {
+        // given
+        Chord chord1 = new Chord();
+
+        // when
+        boolean result = chord1.shouldMoveSbToHo();
+
+        // then
+        assertFalse(result);
+    }
 }
