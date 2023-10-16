@@ -15,6 +15,9 @@ https://www.youtube.com/watch?v=z3OylWor4RQ
 ## Download
 https://github.com/dudehacker/Hitsound-Detective/releases/latest
 
+JAVA:
+https://www.oracle.com/ca-en/java/technologies/downloads/#jdk21-windows
+
 ## Usage
 1. Check unused hitsound
 2. Check muted hitsound or Storyboard sample
