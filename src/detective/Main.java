@@ -5,6 +5,7 @@ import detective.image.ImageDetective;
 import detective.mistake.Mistake;
 import lombok.extern.slf4j.Slf4j;
 import osu.beatmap.Beatmap;
+import osu.beatmap.hitobject.GlobalSFX;
 import util.BeatmapUtils;
 
 import java.io.*;
@@ -66,9 +67,7 @@ public class Main {
         Collections.sort(list);
         for (HitsoundDetectiveThread hd : list) {
             frame.addTabForSpecificDifficulty(hd.getName(), hd.getMistakes());
-            for (String s : hd.getUsedHS()) {
-                usedHitsound.add(s);
-            }
+            usedHitsound.addAll(hd.getUsedHitsounds());
         }
 
         // get actual Hitsound
@@ -85,33 +84,33 @@ public class Main {
         Set<String> physicalHS = new HashSet<>();
         File[] wavFiles = new File(OsuPath).listFiles(hsFilter);
 
-
-        for (File wav : wavFiles) {
-            physicalHS.add(wav.getName());
+        if (wavFiles != null) {
+            for (File wav : wavFiles) {
+                physicalHS.add(wav.getName());
+            }
         }
 
         // Find un-used hitsound
         TreeSet<String> unusedHitsounds = new TreeSet<>(physicalHS);
         unusedHitsounds.removeAll(usedHitsound);
-        unusedHitsounds.remove("combobreak.wav");
+        unusedHitsounds.removeIf(GlobalSFX::isGlobalSFX);
         frame.addTabForAllDifficulties("Unused hitsound", unusedHitsounds);
         if (textOutput) {
-            System.out.println("printing unused hs");
+            log.info("printing unused hs");
             try {
                 writeListToFile(unusedHitsounds, "Unused.txt");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("failed to save unused HS to disk", e);
             }
         }
 
         // Find missing hitsound
         Set<String> missingHitsounds = new HashSet<>(usedHitsound);
-        System.out.println("used\n" + usedHitsound.toString());
-        System.out.println("exist\n" + physicalHS.toString());
+
+        log.info("used {}", usedHitsound);
+        log.info("in folder {}", physicalHS);
         missingHitsounds.removeAll(physicalHS);
         frame.addTabForAllDifficulties("Missing hitsound", missingHitsounds);
-
-        // frame.addTabForAllDifficulties("Bad Images", imageMistakes);
     }
 
     private static void readFromProperty(String path) {
