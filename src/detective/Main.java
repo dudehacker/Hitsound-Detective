@@ -17,9 +17,9 @@ public class Main {
     private static final String propertyName = "Hitsound Detective config.properties";
     private static final Set<String> imageMistakes = new HashSet<>();
     private static final String programStartPath = System.getProperty("user.dir");
+    private static final List<HitsoundDetectiveThread> list = new ArrayList<>();
     private static String OsuPath = "C:\\Program Files (x86)\\osu!\\Songs";
     private static boolean textOutput = true;
-    private static List<HitsoundDetectiveThread> list = new ArrayList<>();
 
     public static void main(String[] args) {
         readFromProperty(programStartPath);
@@ -71,15 +71,9 @@ public class Main {
         }
 
         // get actual Hitsound
-        FilenameFilter hsFilter = new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                String lowercaseName = name.toLowerCase();
-                if (lowercaseName.endsWith(".wav") || lowercaseName.endsWith(".ogg")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+        FilenameFilter hsFilter = (dir, name) -> {
+            String lowercaseName = name.toLowerCase();
+            return lowercaseName.endsWith(".wav") || lowercaseName.endsWith(".ogg");
         };
         Set<String> physicalHS = new HashSet<>();
         File[] wavFiles = new File(OsuPath).listFiles(hsFilter);
@@ -115,7 +109,7 @@ public class Main {
 
     private static void readFromProperty(String path) {
         Properties prop = new Properties();
-        InputStream input = null;
+        InputStream input;
 
         try {
             String propertyPath = path + "\\" + propertyName;
@@ -159,16 +153,14 @@ public class Main {
             prop.store(output, null);
             output.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("error writing to properties", e);
         }
     }
 
     private static void writeListToFile(Set<String> set, String filename) throws IOException {
         FileWriter fw = new FileWriter(programStartPath + "\\" + filename);
         System.out.println(programStartPath + "\\" + filename);
-        Iterator<String> ite = set.iterator();
-        while (ite.hasNext()) {
-            String s = ite.next();
+        for (String s : set) {
             fw.write(s);
             fw.write("\n");
         }

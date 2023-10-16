@@ -1,5 +1,6 @@
 package osu;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import osu.beatmap.Chord;
 import osu.beatmap.event.Sample;
@@ -11,6 +12,7 @@ import osu.beatmap.hitobject.SampleSet;
 import static org.junit.Assert.*;
 
 
+@Slf4j
 public class TestChord {
     @Test
     public void Test_GetHashCode() {
@@ -141,6 +143,59 @@ public class TestChord {
 
         // when
         boolean result = chord1.shouldMoveSbToHo();
+
+        // then
+        assertFalse(result);
+    }
+
+    @Test
+    public void extraHsInTargetButNotInHs() {
+        // given
+        Chord target = new Chord();
+        target.add(new Sample(0, "kick.wav", 70));
+        log.info("target HS {}", target.getHitsounds());
+
+        Chord source = new Chord();
+        log.info("source HS {}", source.getHitsounds());
+
+        // when
+        boolean result = target.hasExtraSoundsComparedToHitsoundDiff(source);
+
+        // then
+        assertTrue(result);
+    }
+
+    @Test
+    public void extraHsInTargetButNotInHs2() {
+        // given
+        Chord target = new Chord();
+        target.add(new HitObject(0, 0, null, 70, HitsoundType.HITFINISH, 0, Addition.AUTO, SampleSet.AUTO));
+        target.add(new Sample(0, "kick.wav", 70));
+        log.info("target HS {}", target.getHitsounds());
+
+        Chord source = new Chord();
+        source.add(new HitObject(500, 0, null, 70, HitsoundType.HITFINISH, 0, Addition.AUTO, SampleSet.AUTO));
+        log.info("source HS {}", source.getHitsounds());
+
+        // when
+        boolean result = target.hasExtraSoundsComparedToHitsoundDiff(source);
+
+        // then
+        assertTrue(result);
+    }
+
+    @Test
+    public void dontFlagExtraHsInTargetButNotInHs() {
+        // given
+        Chord target = new Chord();
+        log.info("target HS {}", target.getHitsounds());
+
+        Chord source = new Chord();
+        source.add(new Sample(0, "kick.wav", 70));
+        log.info("source HS {}", source.getHitsounds());
+
+        // when
+        boolean result = target.hasExtraSoundsComparedToHitsoundDiff(source);
 
         // then
         assertFalse(result);

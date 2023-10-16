@@ -9,21 +9,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Chord {
-    private ArrayList<HitObject> list_HO;
-    private ArrayList<Sample> list_SB;
+    private final ArrayList<HitObject> list_HO;
+    private final ArrayList<Sample> list_SB;
 
     private long startTime;
 
     public Chord() {
-        list_HO = new ArrayList<HitObject>();
-        list_SB = new ArrayList<Sample>();
+        list_HO = new ArrayList<>();
+        list_SB = new ArrayList<>();
         startTime = -1;
     }
 
     public long getStartTime() {
-        if (list_HO.size() > 0)
+        if (!list_HO.isEmpty())
             return list_HO.get(0).getStartTime();
-        else if (list_SB.size() > 0)
+        else if (!list_SB.isEmpty())
             return list_SB.get(0).getStartTime();
         else
             return -1;
@@ -98,6 +98,10 @@ public class Chord {
             return true;
         }
         return this.getHitsounds().containsAll(chord.getHitsounds());
+    }
+
+    public boolean hasExtraSoundsComparedToHitsoundDiff(Chord sourceChord) {
+        return !sourceChord.getHitsounds().containsAll(getHitsounds());
     }
 
     @Override
