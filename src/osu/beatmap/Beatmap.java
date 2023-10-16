@@ -47,8 +47,9 @@ public final class Beatmap {
             String line;
             // read line by line
             while ((line = br.readLine()) != null) {
-                text.append(line).append(System.lineSeparator());
-
+                if (!"[Colours]".equals(line) && !line.contains("Combo")) {
+                    text.append(line).append(System.lineSeparator());
+                }
             }
             if (text.toString().contains("osu file format")) {
                 OsuVersion = Integer.parseInt(text.toString().split(System.lineSeparator())[0].split("osu file format v")[1]);

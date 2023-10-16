@@ -15,11 +15,11 @@ import java.util.*;
 @Slf4j
 public class Main {
     private static final String propertyName = "Hitsound Detective config.properties";
+    private static final Set<String> imageMistakes = new HashSet<>();
+    private static final String programStartPath = System.getProperty("user.dir");
     private static String OsuPath = "C:\\Program Files (x86)\\osu!\\Songs";
-    private static String programStartPath = System.getProperty("user.dir");
     private static boolean textOutput = true;
     private static List<HitsoundDetectiveThread> list = new ArrayList<>();
-    private static Set<String> imageMistakes = new HashSet<>();
 
     public static void main(String[] args) {
         readFromProperty(programStartPath);
@@ -43,10 +43,10 @@ public class Main {
                 list.add(hd);
                 hd.run();
             } catch (ParseException | IOException e) {
-                e.printStackTrace();
+                log.error("error open beatmap", e);
             }
         }
-        System.out.println("after reading all beatmaps");
+        log.info("after reading all beatmaps");
         processResult();
         for (String image : images) {
             File f = new File(sourceFile.getParent() + "\\" + image);
