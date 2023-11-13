@@ -129,7 +129,7 @@ public class HitsoundDetectiveThread implements Comparable<HitsoundDetectiveThre
                         mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.Inconsistency));
                     }
 
-                    if (!chord.hasExtraSoundsComparedToHitsoundDiff(sourceChord)) {
+                    if (chord.hasExtraSoundsComparedToHitsoundDiff(sourceChord)) {
                         mistakes.add(new TimedMistake(chord.getStartTime(), MistakeType.Inconsistency));
                     }
                 }
