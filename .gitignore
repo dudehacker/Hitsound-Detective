@@ -11,3 +11,4 @@ Hitsound Detective config.properties
 .idea
 META-INF
 out
+*.jar

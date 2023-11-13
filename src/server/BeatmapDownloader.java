@@ -14,7 +14,6 @@ import server.model.osu.api.BeatmapInfoJSON;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -104,7 +103,7 @@ public class BeatmapDownloader {
         passwordInput.sendKeys(System.getenv("osu_pw"));
         WebElement signInSubmit = driver.findElement(By.cssSelector("button.btn-osu-big--nav-popup"));
         signInSubmit.click();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofMillis(30));
+        WebDriverWait wait = new WebDriverWait(driver, 30);
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("page-mode__item")));
     }
 
