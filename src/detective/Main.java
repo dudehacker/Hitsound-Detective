@@ -24,10 +24,13 @@ public class Main {
     public static void main(String[] args) {
         readFromProperty(programStartPath);
         File osuDefaultPath = new File(OsuPath);
-        if (!osuDefaultPath.exists()) {
-            OsuPath = programStartPath;
+        if (!osuDefaultPath.isDirectory()) {
+            OsuPath = System.getProperty("user.home");
         }
         File sourceFile = BeatmapUtils.getOsuFile(OsuPath);
+        if (sourceFile == null) {
+            return;
+        }
         OsuPath = sourceFile.getParentFile().getAbsolutePath();
 
         writeToProperty(programStartPath);
@@ -49,7 +52,7 @@ public class Main {
         log.info("after reading all beatmaps");
         processResult();
         for (String image : images) {
-            File f = new File(sourceFile.getParent() + "\\" + image);
+            File f = new File(sourceFile.getParent() + File.separator + image);
             Mistake m = ImageDetective.check(f);
             if (m != null) {
                 imageMistakes.add(m.getDescription());
@@ -112,7 +115,7 @@ public class Main {
         InputStream input;
 
         try {
-            String propertyPath = path + "\\" + propertyName;
+            String propertyPath = new File(path, propertyName).getPath();
             File f = new File(propertyPath);
             if (f.exists() && f.isFile()) {
                 input = new FileInputStream(propertyPath);
@@ -137,7 +140,7 @@ public class Main {
         Properties prop = new Properties();
         OutputStream output = null;
         try {
-            String propertyPath = path + "\\" + propertyName;
+            String propertyPath = new File(path, propertyName).getPath();
             File f = new File(propertyPath);
             if (!f.exists()) {
                 f.createNewFile();
@@ -158,8 +161,8 @@ public class Main {
     }
 
     private static void writeListToFile(Set<String> set, String filename) throws IOException {
-        FileWriter fw = new FileWriter(programStartPath + "\\" + filename);
-        System.out.println(programStartPath + "\\" + filename);
+        FileWriter fw = new FileWriter(new File(programStartPath, filename).getPath());
+        System.out.println(new File(programStartPath, filename).getPath());
         for (String s : set) {
             fw.write(s);
             fw.write("\n");
