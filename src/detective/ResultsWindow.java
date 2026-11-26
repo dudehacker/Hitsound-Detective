@@ -128,7 +128,7 @@ public class ResultsWindow extends JFrame {
             Iterator<String> ite = HS.iterator();
             while (ite.hasNext()) {
                 String s = ite.next();
-                File f = new File(songPath + "\\" + s);
+                File f = new File(songPath, s);
 //				System.out.println(f);
                 try {
                     Files.deleteIfExists(f.toPath());
